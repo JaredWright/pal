@@ -20,6 +20,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+import os
+
 class Configuration():
     """ A single user-definable configuration variable """
     def __init__(self, name, default_value):
@@ -162,4 +164,50 @@ config.add_configuration(c)
 
 c = Configuration("is_bit_cleared_function", "is_disabled")
 c.description = "Name of generated functions for checking if a bit is set to 0"
+config.add_configuration(c)
+
+# -----------------------------------------------------------------------------
+# C++ options
+# -----------------------------------------------------------------------------
+
+c = Configuration("cxx_namespace", "shoulder::aarch64")
+c.description = "Top namespace to place generated c++ functions into"
+config.add_configuration(c)
+
+# -----------------------------------------------------------------------------
+# Paths
+# -----------------------------------------------------------------------------
+
+package_dir = os.path.dirname(os.path.realpath(__file__))
+project_dir = os.path.abspath(os.path.join(package_dir, ".."))
+scripts_dir = os.path.join(project_dir, "scripts")
+include_dir = os.path.join(project_dir, "include")
+
+c = Configuration("shoulder_project_dir", str(project_dir))
+c.description = "Path the top directory of the shoulder project"
+config.add_configuration(c)
+
+c = Configuration("shoulder_package_dir", str(package_dir))
+c.description = "Path the shoulder python package directory"
+config.add_configuration(c)
+
+c = Configuration("shoulder_scripts_dir", scripts_dir)
+c.description = "Path the shoulder project scripts directory"
+config.add_configuration(c)
+
+c = Configuration("shoulder_include_dir", include_dir)
+c.description = "Path the shoulder header include directory"
+config.add_configuration(c)
+
+test_dir = os.path.join(project_dir, "test")
+c = Configuration("shoulder_test_dir", test_dir)
+c.description = "Path the shoulder test directory"
+config.add_configuration(c)
+
+c = Configuration("license_template_path", os.path.join(scripts_dir, "license.txt"))
+c.description = "Path to license template for generated files"
+config.add_configuration(c)
+
+c = Configuration("regs_h_path", os.path.join(include_dir, "regs.h"))
+c.description = "Path to regs.h include file"
 config.add_configuration(c)
