@@ -208,6 +208,10 @@ c = Configuration("license_template_path", os.path.join(scripts_dir, "license.tx
 c.description = "Path to license template for generated files"
 config.add_configuration(c)
 
-c = Configuration("regs_h_path", os.path.join(include_dir, "regs.h"))
+c = Configuration("regs_h_name", "regs.h")
+c.description = "Name of the c/c++ register access backend include file"
+config.add_configuration(c)
+
+c = Configuration("regs_h_path", os.path.join(include_dir, config.regs_h_name))
 c.description = "Path to regs.h include file"
 config.add_configuration(c)
