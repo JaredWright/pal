@@ -23,13 +23,6 @@
 import abc
 
 class AbstractGenerator(abc.ABC):
-    #  @property
-    @staticmethod
-    @abc.abstractmethod
-    def generator_id():
-        """ Name of the target to be generated for (C, C++, etc) """
-        return 99
-
     @abc.abstractmethod
     def generate(self, objects, outpath):
         """ Generate target output using the given register and/or """

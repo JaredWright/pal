@@ -21,6 +21,7 @@
 # SOFTWARE.
 
 from shoulder.generator.abstract_generator import AbstractGenerator
+from shoulder.register import Register
 from shoulder.logger import logger
 from shoulder.config import config
 from shoulder.exception import *
@@ -29,22 +30,27 @@ class CxxHeaderGenerator(AbstractGenerator):
     def __init__(self):
         self._current_indent_level = 0
 
-    def generator_id():
-        return "c++ header-only generator"
-
     def generate(self, objects, outpath):
-        logger.info("Generating C++ header: " + str(outpath))
-        with open(outpath, "w") as outfile:
-            self._generate_license(outfile)
-            self._generate_cxx_includes(outfile)
-            self._generate_include_guard_open(outfile)
-            self._generate_namespace_open(outfile)
+        try:
+            logger.info("Generating C++ header: " + str(outpath))
+            with open(outpath, "w") as outfile:
+                self._generate_license(outfile)
+                self._generate_cxx_includes(outfile)
+                self._generate_include_guard_open(outfile)
+                self._generate_namespace_open(outfile)
 
-            self._sort_objects(objects)
-            self._generate_objects(objects, outfile)
+                self._generate_objects(objects, outfile)
 
-            self._generate_namespace_close(outfile)
-            self._generate_include_guard_close(outfile)
+                self._generate_namespace_close(outfile)
+                self._generate_include_guard_close(outfile)
+
+        except Exception as e:
+            msg = "{g} failed to generate output {out}: {exception}".format(
+                g = str(type(self).__name__),
+                out = outpath,
+                exception = e
+            )
+            raise ShoulderGeneratorException(msg)
 
     def _generate_license(self, outfile):
         logger.debug("Writing license from: " + str(config.license_template_path))
@@ -68,32 +74,40 @@ class CxxHeaderGenerator(AbstractGenerator):
         outfile.write("#endif\n\n")
 
     def _generate_namespace_open(self, outfile):
-        namespaces = config.cxx_namespace.split("::")
-        for namespace in namespaces:
-            outfile.write("namespace " + namespace + "\n{\n")
+        if not config.cxx_namespace: return
+        namespace_str = str(config.cxx_namespace)
+        namespaces = namespace_str.split("::")
+        if namespaces[0]:
+            for namespace in namespaces:
+                outfile.write("namespace " + namespace + "\n{\n")
 
     def _generate_namespace_close(self, outfile):
-        namespaces = config.cxx_namespace.split("::")
+        if not config.cxx_namespace: return
+        namespace_str = str(config.cxx_namespace)
+        namespaces = namespace_str.split("::")
         for namespace in namespaces:
             outfile.write("}\n")
 
-    def _sort_objects(self, objects):
-        logger.error("Sort objects not yet implemented")
-
     def _generate_objects(self, objects, outfile):
         for obj in objects:
-            logger.debug("Writing output object:\n" + str(obj))
-            self._generate_register(obj, outfile)
+            if(isinstance(obj, Register)):
+                logger.debug("Writing register:\n" + str(obj))
+                self._generate_register(obj, outfile)
+            else:
+                msg = "Cannot generate object of unsupported {t} type".format(
+                    t = type(obj)
+                )
+                raise ShoulderGeneratorException(msg)
 
     def _generate_register(self, reg, outfile):
-        reg_cxx_name = reg.name.lower()
+        reg_cxx_name = str(reg.name).lower()
         reg_cxx_size = "uint64_t" if reg.size == 64 else "uint32_t"
 
         outfile.write("\n")
         reg_comment = "// {name} ({long_name})\n// {purpose}\n".format(
-            name = reg.name,
-            long_name = reg.long_name,
-            purpose = reg.purpose
+            name = str(reg.name),
+            long_name = str(reg.long_name),
+            purpose = str(reg.purpose)
         )
         outfile.write(reg_comment)
 
@@ -159,23 +173,11 @@ class CxxHeaderGenerator(AbstractGenerator):
                 )
                 outfile.write(fieldset_namespace_close)
         else:
-            logger.info("No fieldsets generated for system register " + reg.name)
+            logger.debug("No fieldsets generated for system register " + str(reg.name))
 
     def _generate_single_fieldset(self, reg, fieldset, outfile):
-        excluded_fields = ["implementation defined", "0", "1", "reserved"]
-        field_special_chars = [' ', '<', '>', '[', ']', '(', ')', '{', '}']
-
-        if not fieldset.is_valid():
-            logger.warn("Skipping generation of invalid fieldset: " + str(fieldset))
-            return
-
         for field in fieldset.fields:
             field_cxx_name = field.name.lower()
-            if field_cxx_name in excluded_fields: continue
-            for char in field_cxx_name:
-                if char in field_special_chars:
-                    field_cxx_name = field_cxx_name.replace(char, '_')
-
             outfile.write("\n")
             field_namespace = "{indent}namespace {name}\n{indent}{{\n".format(
                 indent = self._indent_string(),
@@ -345,7 +347,7 @@ class CxxHeaderGenerator(AbstractGenerator):
         )
         outfile.write(accessor)
 
-        # Set the field's value in the system register directly
+        # Set the field's value in an integer value 
         accessor = "{indent}inline {size_t} {func}({size_t} {arg1}, {size_t} {arg2}) noexcept "
         accessor += "{{ SET_BITS_BY_VALUE_FUNC({arg1}, {arg2}, {mask}, {lsb}) }}\n"
         accessor = accessor.format(
@@ -373,7 +375,3 @@ class CxxHeaderGenerator(AbstractGenerator):
         for level in range(0, self._current_indent_level):
             indent_str += "\t"
         return indent_str
-
-    def _generate_indent(self, outfile):
-        indent = self._indent_string()
-        outfile.write(indent)
