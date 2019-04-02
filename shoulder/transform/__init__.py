@@ -20,30 +20,28 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from shoulder.filter.abstract_filter import AbstractFilter
-from shoulder.logger import logger
+import os
+import sys
+import pkgutil
 
-class FieldReserved1(AbstractFilter):
-    @property
-    def description(self):
-        d = "Removing \"reserved 1\" fields"
-        return d
+pkg_dir = os.path.dirname(__file__)
+for (module_loader, name, ispkg) in pkgutil.iter_modules([pkg_dir]):
+    pkgutil.importlib.import_module('.' + name, __package__)
 
-    def do_filter(self, objects):
-        result = list(map(self._do_single_transform, objects))
-        return result
+# -----------------------------------------------------------------------------
+# Module interface
+# -----------------------------------------------------------------------------
 
-    def _do_single_transform(self, reg):
-        for fs in reg.fieldsets:
-            fs_len = len(fs.fields)
-            fs.fields = [field for field in fs.fields if not "1" == field.name]
+# Usage:
+#
+# from shoulder.transform import transforms
+# registers = transforms["name"].transform(registers)
 
-            count = fs_len - len(fs.fields)
-            if count:
-                logger.debug("Removed {count} RES1 field{s} from {reg}".format(
-                    count = count,
-                    reg = reg.name,
-                    s = "" if count == 1 else "s"
-                ))
-
-        return reg
+transforms = {
+    "n_counter_to_zero": n_counter_to_zero.NCounterToZero(),
+    "quirks": quirks.QuirksTransform(),
+    "remove_implementation_defined": remove_implementation_defined.RemoveImplementationDefinedTransform(),
+    "remove_reserved_0": remove_reserved_0.RemoveReserved0Transform(),
+    "remove_reserved_1": remove_reserved_1.RemoveReserved1Transform(),
+    "special_to_underscore": special_to_underscore.SpecialToUnderscoreTransform()
+}

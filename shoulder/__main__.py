@@ -27,6 +27,7 @@ from shoulder.logger import logger
 from shoulder.parser import *
 from shoulder.generator import *
 from shoulder.filter import filters
+from shoulder.transform import transforms
 
 regs = parse_registers(config.xml_register_dir)
 logger.debug("Registers parsed: " + str(len(regs)))
@@ -43,5 +44,12 @@ regs = filters["sve"].filter_exclusive(regs)
 regs = filters["trace"].filter_exclusive(regs)
 regs = filters["invalid"].filter_exclusive(regs)
 logger.debug("Registers remaining after filters: " + str(len(regs)))
+
+regs = transforms["remove_implementation_defined"].transform(regs)
+regs = transforms["remove_reserved_0"].transform(regs)
+regs = transforms["remove_reserved_1"].transform(regs)
+regs = transforms["n_counter_to_zero"].transform(regs)
+regs = transforms["quirks"].transform(regs)
+regs = transforms["special_to_underscore"].transform(regs)
 
 generate_all(regs, config.shoulder_output_dir)
