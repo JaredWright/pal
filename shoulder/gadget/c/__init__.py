@@ -20,19 +20,9 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from .gadget_properties import GadgetProperties
-from .header_depends import header_depends
-from .include_guard import include_guard
-from .license import license
-from .c import *
-from .cxx import *
+from .get_from_register import get_from_register
+from .get_from_value import get_from_value
+from .set_value_to_register import set_value_to_register
 
-from typing import List
-
-def create_gadget_properties() -> List[GadgetProperties]:
-    properties_subclasses = [cls for cls in GadgetProperties.__subclasses__()]
-    properties = {}
-    for subclass in properties_subclasses:
-        p = subclass()
-        properties[p.gadget_name] = p
-    return properties
+from .function_definition import function_definition
+from .enum import enum
