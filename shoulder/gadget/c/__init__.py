@@ -20,9 +20,5 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from .get_from_register import get_from_register
-from .get_from_value import get_from_value
-from .set_value_to_register import set_value_to_register
-
 from .function_definition import function_definition
 from .enum import enum
