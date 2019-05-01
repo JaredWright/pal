@@ -65,18 +65,19 @@ class CHeaderGenerator2(AbstractGenerator):
     @shoulder.gadget.include_guard
     @shoulder.gadget.header_depends
     def _generate(self, outfile, regs):
-        self.gadgets["shoulder.c.enum"].indent = 1
 
         for reg in regs:
+            self.gadgets["shoulder.c.enum"].indent = 0
+            self.gadgets["shoulder.c.function_definition"].indent = 0
+
             self._generate_register_comment(outfile, reg)
-
-            gadget = self.gadgets["shoulder.c.function_definition"]
-            gadget.indent = 0
-
+            self._generate_register_constants(outfile, reg)
             self._generate_register_get(outfile, reg)
             self._generate_register_set(outfile, reg)
 
-            gadget.indent = 1
+            self.gadgets["shoulder.c.enum"].indent = 1
+            self.gadgets["shoulder.c.function_definition"].indent = 1
+
             for fieldset in reg.fieldsets:
                 self._generate_fieldset_comment(outfile, fieldset)
 
@@ -272,8 +273,22 @@ class CHeaderGenerator2(AbstractGenerator):
         outfile.write("TODO: set register using str")
 
 # ----------------------------------------------------------------------------
-# field constants
+# constants
 # ----------------------------------------------------------------------------
+    @shoulder.gadget.c.enum
+    def _generate_register_constants(self, outfile, reg):
+        """
+        Generate constants that describe a the given register
+        """
+
+        constants = "{reg}_name = \"{reg}\""
+
+        constants = constants.format(
+            reg=reg.name.lower()
+        )
+
+        outfile.write(constants)
+
     @shoulder.gadget.c.enum
     def _generate_field_constants(self, outfile, reg, field):
         """
