@@ -39,11 +39,12 @@ class CHeaderGenerator2(AbstractGenerator):
 
             regs = transforms["remove_reserved_0"].transform(regs)
             regs = transforms["remove_reserved_1"].transform(regs)
-            #  regs = transforms["remove_coprocessor_am"].transform(regs)
-            #  regs = transforms["remove_memory_mapped_am"].transform(regs)
-            #  regs = transforms["remove_system_vector_am"].transform(regs)
-            #  regs = transforms["remove_system_banked_am"].transform(regs)
-            #  regs = transforms["remove_system_immediate_am"].transform(regs)
+            regs = transforms["special_to_underscore"].transform(regs)
+            regs = transforms["remove_coprocessor_am"].transform(regs)
+            regs = transforms["remove_memory_mapped_am"].transform(regs)
+            regs = transforms["remove_system_vector_am"].transform(regs)
+            regs = transforms["remove_system_banked_am"].transform(regs)
+            regs = transforms["remove_system_immediate_am"].transform(regs)
             regs = transforms["unique_fieldset_names"].transform(regs)
 
             regs = filters["no_access_mechanism"].filter_exclusive(regs)
@@ -64,40 +65,13 @@ class CHeaderGenerator2(AbstractGenerator):
     @shoulder.gadget.include_guard
     @shoulder.gadget.header_depends
     def _generate(self, outfile, regs):
+        self.gadgets["shoulder.c.enum"].indent = 1
+
         for reg in regs:
             self._generate_register_comment(outfile, reg)
 
             gadget = self.gadgets["shoulder.c.function_definition"]
             gadget.indent = 0
-
-            if reg.size == 32:
-                gadget.return_type = "uint32_t"
-            else:
-                gadget.return_type = "uint64_t"
-
-            #  if reg.access_mechanisms["mrs_register"]:
-            #      am = reg.access_mechanisms["mrs_register"][0]
-            #      self._generate_mrs_register_accessor(outfile, reg, am)
-            #
-            #  elif reg.access_mechanisms["mrs_banked"]:
-            #      am = reg.access_mechanisms["mrs_banked"][0]
-            #      self._generate_mrs_banked_accessor(outfile, reg, am)
-            #
-            #  elif reg.access_mechanisms["mrc"]:
-            #      am = reg.access_mechanisms["mrc"][0]
-            #      self._generate_mrc_accessor(outfile, reg, am)
-            #
-            #  elif reg.access_mechanisms["mrrc"]:
-            #      am = reg.access_mechanisms["mrrc"][0]
-            #      self._generate_mrrc_accessor(outfile, reg, am)
-            #
-            #  elif reg.access_mechanisms["vmrs"]:
-            #      am = reg.access_mechanisms["vmrs"][0]
-            #      self._generate_vmrs_accessor(outfile, reg, am)
-            #
-            #  elif reg.access_mechanisms["ldr"]:
-            #      am = reg.access_mechanisms["ldr"][0]
-            #      self._generate_ldr_accessor(outfile, reg, am)
 
             self._generate_register_get(outfile, reg)
             self._generate_register_set(outfile, reg)
@@ -107,15 +81,16 @@ class CHeaderGenerator2(AbstractGenerator):
                 self._generate_fieldset_comment(outfile, fieldset)
 
                 for field in fieldset.fields:
+                    self._generate_field_constants(outfile, reg, field)
                     if field.msb == field.lsb:
-                        self._generate_bitfield_enable(outfile, reg, field)
-                        self._generate_bitfield_enable_val(outfile, reg, field)
-                        self._generate_bitfield_is_enabled(outfile, reg, field)
-                        self._generate_bitfield_is_enabled_val(outfile, reg, field)
-                        self._generate_bitfield_disable(outfile, reg, field)
-                        self._generate_bitfield_disable_val(outfile, reg, field)
-                        self._generate_bitfield_is_disabled(outfile, reg, field)
-                        self._generate_bitfield_is_disabled_val(outfile, reg, field)
+                        self._generate_bitfield_set(outfile, reg, field)
+                        self._generate_bitfield_set_val(outfile, reg, field)
+                        self._generate_bitfield_is_set(outfile, reg, field)
+                        self._generate_bitfield_is_set_val(outfile, reg, field)
+                        self._generate_bitfield_clear(outfile, reg, field)
+                        self._generate_bitfield_clear_val(outfile, reg, field)
+                        self._generate_bitfield_is_clear(outfile, reg, field)
+                        self._generate_bitfield_is_clear_val(outfile, reg, field)
                     else:
                         self._generate_field_get(outfile, reg, field)
                         self._generate_field_get_val(outfile, reg, field)
@@ -153,59 +128,68 @@ class CHeaderGenerator2(AbstractGenerator):
         Generate a C function that reads the given register
         """
 
+        rname = reg.name.lower()
+        prefix = config.c_prefix
+        suffix = config.register_read_function
+        if reg.size == 32:
+            size_type = "uint32_t"
+        else:
+            size_type = "uint64_t"
+
         gadget = self.gadgets["shoulder.c.function_definition"]
-        gadget.name = "aarch64_" + reg.name.lower() + "_get"
+        gadget.name = prefix + "_" + rname + "_" + suffix
+        gadget.return_type = size_type
         gadget.args = []
 
         if reg.access_mechanisms["mrs_register"]:
             am = reg.access_mechanisms["mrs_register"][0]
-            self._generate_mrs_register_accessor(outfile, reg, am)
+            self._generate_mrs_register_get(outfile, reg, am)
 
         elif reg.access_mechanisms["mrs_banked"]:
             am = reg.access_mechanisms["mrs_banked"][0]
-            self._generate_mrs_banked_accessor(outfile, reg, am)
+            self._generate_mrs_banked_get(outfile, reg, am)
 
         elif reg.access_mechanisms["mrc"]:
             am = reg.access_mechanisms["mrc"][0]
-            self._generate_mrc_accessor(outfile, reg, am)
+            self._generate_mrc_get(outfile, reg, am)
 
         elif reg.access_mechanisms["mrrc"]:
             am = reg.access_mechanisms["mrrc"][0]
-            self._generate_mrrc_accessor(outfile, reg, am)
+            self._generate_mrrc_get(outfile, reg, am)
 
         elif reg.access_mechanisms["vmrs"]:
             am = reg.access_mechanisms["vmrs"][0]
-            self._generate_vmrs_accessor(outfile, reg, am)
+            self._generate_vmrs_get(outfile, reg, am)
 
         elif reg.access_mechanisms["ldr"]:
             am = reg.access_mechanisms["ldr"][0]
-            self._generate_ldr_accessor(outfile, reg, am)
+            self._generate_ldr_get(outfile, reg, am)
 
     @shoulder.gadget.c.function_definition
-    def _generate_mrs_register_accessor(self, outfile, reg, am):
+    def _generate_mrs_register_get(self, outfile, reg, am):
         reg_getter = "GET_SYSREG_FUNC({encoded})".format(
             encoded=hex(am.binary_encoded()))
         outfile.write(reg_getter)
 
     @shoulder.gadget.c.function_definition
-    def _generate_mrs_banked_accessor(self, outfile, reg, am):
-        outfile.write("TODO: mrs_banked")
+    def _generate_mrs_banked_get(self, outfile, reg, am):
+        outfile.write("TODO: get register using mrs_banked")
 
     @shoulder.gadget.c.function_definition
-    def _generate_mrc_accessor(self, outfile, reg, am):
-        outfile.write("TODO: mrc")
+    def _generate_mrc_get(self, outfile, reg, am):
+        outfile.write("TODO: get register using mrc")
 
     @shoulder.gadget.c.function_definition
-    def _generate_mrrc_accessor(self, outfile, reg, am):
-        outfile.write("TODO: mrrc")
+    def _generate_mrrc_get(self, outfile, reg, am):
+        outfile.write("TODO: get register using mrrc")
 
     @shoulder.gadget.c.function_definition
-    def _generate_vmrs_accessor(self, outfile, reg, am):
-        outfile.write("TODO: vmrs")
+    def _generate_vmrs_get(self, outfile, reg, am):
+        outfile.write("TODO: get register using vmrs")
 
     @shoulder.gadget.c.function_definition
-    def _generate_ldr_accessor(self, outfile, reg, am):
-        outfile.write("TODO: ldr")
+    def _generate_ldr_get(self, outfile, reg, am):
+        outfile.write("TODO: get register using ldr")
 
 # ----------------------------------------------------------------------------
 # register_set
@@ -216,437 +200,378 @@ class CHeaderGenerator2(AbstractGenerator):
         Generate a C function that writes the given register
         """
 
+        rname = reg.name.lower()
+        prefix = config.c_prefix
+        suffix = config.register_write_function
+        if reg.size == 32:
+            size_type = "uint32_t"
+        else:
+            size_type = "uint64_t"
+
         gadget = self.gadgets["shoulder.c.function_definition"]
-        size_type = gadget.return_type
-        gadget.name = "aarch64_" + reg.name.lower() + "_set"
+        gadget.name = prefix + "_" + rname + "_" + suffix
+        gadget.return_type = size_type
         gadget.args = [(size_type, "val")]
 
         if reg.access_mechanisms["msr_register"]:
             am = reg.access_mechanisms["msr_register"][0]
-            self._generate_msr_register_accessor(outfile, reg, am)
+            self._generate_msr_register_set(outfile, reg, am)
 
         elif reg.access_mechanisms["mcr"]:
             am = reg.access_mechanisms["mcr"][0]
-            self._generate_mcr_accessor(outfile, reg, am)
+            self._generate_mcr_set(outfile, reg, am)
 
         elif reg.access_mechanisms["mcrr"]:
             am = reg.access_mechanisms["mcrr"][0]
-            self._generate_mcrr_accessor(outfile, reg, am)
+            self._generate_mcrr_set(outfile, reg, am)
 
         elif reg.access_mechanisms["msr_banked"]:
             am = reg.access_mechanisms["msr_banked"][0]
-            self._generate_msr_banked_accessor(outfile, reg, am)
+            self._generate_msr_banked_set(outfile, reg, am)
 
         elif reg.access_mechanisms["msr_immediate"]:
             am = reg.access_mechanisms["msr_immediate"][0]
-            self._generate_msr_immediate_accessor(outfile, reg, am)
+            self._generate_msr_immediate_set(outfile, reg, am)
+
+        elif reg.access_mechanisms["vmsr"]:
+            am = reg.access_mechanisms["vmsr"][0]
+            self._generate_vmsr_set(outfile, reg, am)
 
         elif reg.access_mechanisms["str"]:
             am = reg.access_mechanisms["str"][0]
-            self._generate_str_accessor(outfile, reg, am)
+            self._generate_str_set(outfile, reg, am)
 
     @shoulder.gadget.c.function_definition
-    def _generate_msr_register_accessor(self, outfile, reg, am):
+    def _generate_msr_register_set(self, outfile, reg, am):
         reg_setter = "SET_SYSREG_BY_VALUE_FUNC({access_name}, val)".format(
             access_name=hex(am.binary_encoded()))
         outfile.write(reg_setter)
 
     @shoulder.gadget.c.function_definition
-    def _generate_mcr_accessor(self, outfile, reg, am):
-        outfile.write("TODO: mcr")
+    def _generate_mcr_set(self, outfile, reg, am):
+        outfile.write("TODO: set register using mcr")
 
     @shoulder.gadget.c.function_definition
-    def _generate_mcrr_accessor(self, outfile, reg, am):
-        outfile.write("TODO: mcrr")
+    def _generate_mcrr_set(self, outfile, reg, am):
+        outfile.write("TODO: set register using mcrr")
 
     @shoulder.gadget.c.function_definition
-    def _generate_msr_banked_accessor(self, outfile, reg, am):
-        outfile.write("TODO: msr_banked")
+    def _generate_msr_banked_set(self, outfile, reg, am):
+        outfile.write("TODO: set register using msr_banked")
 
     @shoulder.gadget.c.function_definition
-    def _generate_msr_immediate_accessor(self, outfile, reg, am):
-        outfile.write("TODO: msr_immediate")
+    def _generate_msr_immediate_set(self, outfile, reg, am):
+        outfile.write("TODO: set register using msr_immediate")
 
     @shoulder.gadget.c.function_definition
-    def _generate_vmsr_accessor(self, outfile, reg, am):
-        outfile.write("TODO: vmsr")
+    def _generate_vmsr_set(self, outfile, reg, am):
+        outfile.write("TODO: set register using vmsr")
 
     @shoulder.gadget.c.function_definition
-    def _generate_str_accessor(self, outfile, reg, am):
-        outfile.write("TODO: str")
+    def _generate_str_set(self, outfile, reg, am):
+        outfile.write("TODO: set register using str")
 
 # ----------------------------------------------------------------------------
-# bitfield_enable
+# field constants
 # ----------------------------------------------------------------------------
-    def _generate_bitfield_enable(self, outfile, reg, field):
+    @shoulder.gadget.c.enum
+    def _generate_field_constants(self, outfile, reg, field):
         """
-        Generate a C function that enables the given bitfield (to 1) in the
+        Generate constants that describe a the given field in the given register
+        """
+
+        constants = "{reg}_{field}_name = \"{field}\",\n"
+        constants += "{reg}_{field}_lsb = {lsb},\n"
+        constants += "{reg}_{field}_msb = {msb},\n"
+        constants += "{reg}_{field}_mask = {mask}"
+        constants = constants.format(
+            reg=reg.name.lower(),
+            field=field.name.lower(),
+            lsb=str(field.lsb),
+            msb=str(field.msb),
+            mask=self._field_mask_hex_string(reg, field)
+        )
+
+        outfile.write(constants)
+
+# ----------------------------------------------------------------------------
+# bitfield_set
+# ----------------------------------------------------------------------------
+    def _generate_bitfield_set(self, outfile, reg, field):
+        """
+        Generate a C function that sets/enables the given bitfield (to 1) in the
         given register
         """
 
-        rname = reg.name.lower()
-        fname = field.name.lower()
-        gadget = self.gadgets["shoulder.c.function_definition"]
-        gadget.name = "aarch64_" + rname + "_" + fname + "_enable"
-        gadget.args = []
+        if reg.writeable():
+            gadget = self.gadgets["shoulder.c.function_definition"]
+            gadget.return_type = "void"
+            gadget.args = []
+            gadget.name = "{prefix}_{rname}_{fname}_{suffix}".format(
+                prefix=config.c_prefix,
+                rname=reg.name.lower(),
+                fname=field.name.lower(),
+                suffix=config.bit_set_function
+            )
 
-        if reg.access_mechanisms["msr_register"]:
-            am = reg.access_mechanisms["msr_register"][0]
-            self._generate_msr_bitfield_enable(outfile, reg, field, am)
-
-        elif reg.access_mechanisms["mcr"]:
-            am = reg.access_mechanisms["mcr"][0]
-            self._generate_mcr_bitfield_enable(outfile, reg, am)
-
-        elif reg.access_mechanisms["mcrr"]:
-            am = reg.access_mechanisms["mcrr"][0]
-            self._generate_mcrr_bitfield_enable(outfile, reg, am)
-
-        elif reg.access_mechanisms["msr_banked"]:
-            am = reg.access_mechanisms["msr_banked"][0]
-            self._generate_msr_banked_bitfield_enable(outfile, reg, am)
-
-        elif reg.access_mechanisms["msr_immediate"]:
-            am = reg.access_mechanisms["msr_immediate"][0]
-            self._generate_msr_immediate_bitfield_enable(outfile, reg, am)
-
-        elif reg.access_mechanisms["str"]:
-            am = reg.access_mechanisms["str"][0]
-            self._generate_str_bitfield_enable(outfile, reg, am)
+            self._bitfield_set(outfile, reg, field)
 
     @shoulder.gadget.c.function_definition
-    def _generate_msr_bitfield_enable(self, outfile, reg, field, am):
-        outfile.write("TODO: set bitfield using msr")
+    def _bitfield_set(self, outfile, reg, field):
+        f_body = "{size} val = {reg_get}();\n"
+        f_body += "{reg_set}(val | {mask});"
 
-    @shoulder.gadget.c.function_definition
-    def _generate_mcr_bitfield_enable(self, outfile, reg, am):
-        outfile.write("TODO: set bitfield using mcr")
+        f_body = f_body.format(
+            size=self._register_size_type(reg),
+            mask=self._field_mask_string(reg, field),
+            reg_get=self._register_read_function_name(reg),
+            reg_set=self._register_write_function_name(reg)
+        )
 
-    @shoulder.gadget.c.function_definition
-    def _generate_mcrr_bitfield_enable(self, outfile, reg, am):
-        outfile.write("TODO: set bitfield using mcrr")
-
-    @shoulder.gadget.c.function_definition
-    def _generate_msr_banked_bitfield_enable(self, outfile, reg, am):
-        outfile.write("TODO: set bitfield using msr_banked")
-
-    @shoulder.gadget.c.function_definition
-    def _generate_msr_immediate_bitfield_enable(self, outfile, reg, am):
-        outfile.write("TODO: set bitfield using msr_immediate")
-
-    @shoulder.gadget.c.function_definition
-    def _generate_vmsr_bitfield_enable(self, outfile, reg, am):
-        outfile.write("TODO: set bitfield using vmsr")
-
-    @shoulder.gadget.c.function_definition
-    def _generate_str_bitfield_enable(self, outfile, reg, am):
-        outfile.write("TODO: set bitfield using str")
+        outfile.write(f_body)
 
 # ----------------------------------------------------------------------------
-# bitfield_enable_val
+# bitfield_set_val
 # ----------------------------------------------------------------------------
-    def _generate_bitfield_enable_val(self, outfile, reg, field):
+    def _generate_bitfield_set_val(self, outfile, reg, field):
         """
         Generate a C function that sets the given bitfield (1) in an integer
         value
         """
 
-        rname = reg.name.lower()
-        fname = field.name.lower()
-        gadget = self.gadgets["shoulder.c.function_definition"]
-        size_type = gadget.return_type
+        if reg.writeable():
+            size_type = self._register_size_type(reg)
 
-        gadget.name = "aarch64_" + rname + "_" + fname + "_enable_val"
-        gadget.args = [(size_type, "arg1"), (size_type, "arg2")]
+            gadget = self.gadgets["shoulder.c.function_definition"]
+            gadget.return_type = size_type
+            gadget.args = [(size_type, "val")]
+            gadget.name = "{prefix}_{rname}_{fname}_{suffix}".format(
+                prefix=config.c_prefix,
+                rname=reg.name.lower(),
+                fname=field.name.lower(),
+                suffix=config.bit_set_function + "_val"
+            )
 
-        self._bitfield_enable_val(outfile, reg, field)
+            self._bitfield_set_val(outfile, reg, field)
 
     @shoulder.gadget.c.function_definition
-    def _bitfield_enable_val(self, outfile, reg, field):
-        func = "SET_BITS_BY_MASK_FUNC(val, {mask})".format(mask=field.lsb)
-        outfile.write(func)
+    def _bitfield_set_val(self, outfile, reg, field):
+        f_body = "return val | {mask};".format(
+            mask=self._field_mask_string(reg, field)
+        )
+        outfile.write(f_body)
 
 # ----------------------------------------------------------------------------
-# bitfield_is_enabled
+# bitfield_is_set
 # ----------------------------------------------------------------------------
 
-    def _generate_bitfield_is_enabled(self, outfile, reg, field):
+    def _generate_bitfield_is_set(self, outfile, reg, field):
         """
         Generate a C function that checks if the given bitfield is set (1) in
         the given register
         """
 
-        rname = reg.name.lower()
-        fname = field.name.lower()
-        gadget = self.gadgets["shoulder.c.function_definition"]
-        gadget.name = "aarch64_" + rname + "_" + fname + "_is_enabled"
-        gadget.args = []
+        if reg.readable():
+            size_type = self._register_size_type(reg)
 
-        if reg.access_mechanisms["msr_register"]:
-            am = reg.access_mechanisms["msr_register"][0]
-            self._generate_msr_bitfield_is_enabled(outfile, reg, field, am)
+            gadget = self.gadgets["shoulder.c.function_definition"]
+            gadget.return_type = size_type
+            gadget.args = []
+            gadget.name = "{prefix}_{rname}_{fname}_{suffix}".format(
+                prefix=config.c_prefix,
+                rname=reg.name.lower(),
+                fname=field.name.lower(),
+                suffix=config.is_bit_set_function
+            )
 
-        elif reg.access_mechanisms["mcr"]:
-            am = reg.access_mechanisms["mcr"][0]
-            self._generate_mcr_bitfield_is_enabled(outfile, reg, am)
-
-        elif reg.access_mechanisms["mcrr"]:
-            am = reg.access_mechanisms["mcrr"][0]
-            self._generate_mcrr_bitfield_is_enabled(outfile, reg, am)
-
-        elif reg.access_mechanisms["msr_banked"]:
-            am = reg.access_mechanisms["msr_banked"][0]
-            self._generate_msr_banked_bitfield_is_enabled(outfile, reg, am)
-
-        elif reg.access_mechanisms["msr_immediate"]:
-            am = reg.access_mechanisms["msr_immediate"][0]
-            self._generate_msr_immediate_bitfield_is_enabled(outfile, reg, am)
-
-        elif reg.access_mechanisms["str"]:
-            am = reg.access_mechanisms["str"][0]
-            self._generate_str_bitfield_is_enabled(outfile, reg, am)
+            self._bitfield_is_set(outfile, reg, field)
 
     @shoulder.gadget.c.function_definition
-    def _generate_msr_bitfield_is_enabled(self, outfile, reg, field, am):
-        func = "IS_SYSREG_BIT_ENABLED_FUNC({accessname}, {lsb})".format(
-            accessname=hex(am.binary_encoded()),
-            lsb=field.lsb
+    def _bitfield_is_set(self, outfile, reg, field):
+        f_body = "{size} val = {reg_get}();\n"
+        f_body += "return (val & {mask}) != 0;"
+
+        f_body = f_body.format(
+            size=self._register_size_type(reg),
+            mask=self._field_mask_string(reg, field),
+            reg_get=self._register_read_function_name(reg),
         )
-        outfile.write(func)
 
-    @shoulder.gadget.c.function_definition
-    def _generate_mcr_bitfield_is_enabled(self, outfile, reg, am):
-        outfile.write("TODO: check bitfield enabled using mcr")
-
-    @shoulder.gadget.c.function_definition
-    def _generate_mcrr_bitfield_is_enabled(self, outfile, reg, am):
-        outfile.write("TODO: check bitfield enabled using mcrr")
-
-    @shoulder.gadget.c.function_definition
-    def _generate_msr_banked_bitfield_is_enabled(self, outfile, reg, am):
-        outfile.write("TODO: check bitfield enabled using msr_banked")
-
-    @shoulder.gadget.c.function_definition
-    def _generate_msr_immediate_bitfield_is_enabled(self, outfile, reg, am):
-        outfile.write("TODO: check bitfield enabled using msr_immediate")
-
-    @shoulder.gadget.c.function_definition
-    def _generate_vmsr_bitfield_is_enabled(self, outfile, reg, am):
-        outfile.write("TODO: check bitfield enabled using vmsr")
-
-    @shoulder.gadget.c.function_definition
-    def _generate_str_bitfield_is_enabled(self, outfile, reg, am):
-        outfile.write("TODO: check bitfield enabled using str")
+        outfile.write(f_body)
 
 # ----------------------------------------------------------------------------
-# bitfield_is_enabled_val
+# bitfield_is_set_val
 # ----------------------------------------------------------------------------
-    def _generate_bitfield_is_enabled_val(self, outfile, reg, field):
+    def _generate_bitfield_is_set_val(self, outfile, reg, field):
         """
-        Generate a C function that checks if the given bitfield is enabled (1)
-        in an integer value
+        Generate a C function that checks if the given bitfield is set/enabled
+        (to 1) in an integer value
         """
 
-        rname = reg.name.lower()
-        fname = field.name.lower()
-        gadget = self.gadgets["shoulder.c.function_definition"]
-        size_type = gadget.return_type
+        if reg.readable():
+            size_type = self._register_size_type(reg)
 
-        gadget.name = "aarch64_" + rname + "_" + fname + "_is_enabled_val"
-        gadget.args = [(size_type, "val")]
+            gadget = self.gadgets["shoulder.c.function_definition"]
+            gadget.return_type = size_type
+            gadget.args = [(size_type, "val")]
+            gadget.name = "{prefix}_{rname}_{fname}_{suffix}".format(
+                prefix=config.c_prefix,
+                rname=reg.name.lower(),
+                fname=field.name.lower(),
+                suffix=config.is_bit_set_function + "_val"
+            )
 
-        self._generate_bitfield_is_enabled_value(outfile, reg, field)
+            self._bitfield_is_set_val(outfile, reg, field)
 
     @shoulder.gadget.c.function_definition
-    def _generate_bitfield_is_enabled_value(self, outfile, reg, field):
-        func = "IS_BIT_ENABLED_FUNC(val, {lsb})".format(lsb=field.lsb)
-        outfile.write(func)
+    def _bitfield_is_set_val(self, outfile, reg, field):
+        f_body = "return (val & {mask}) != 0;"
+
+        f_body = f_body.format(
+            mask=self._field_mask_string(reg, field)
+        )
+
+        outfile.write(f_body)
 
 # ----------------------------------------------------------------------------
 # bitfield_disable
 # ----------------------------------------------------------------------------
-    def _generate_bitfield_disable(self, outfile, reg, field):
+    def _generate_bitfield_clear(self, outfile, reg, field):
         """
         Generate a C function that disables the given bitfield (to 1) in the
         given register
         """
 
-        rname = reg.name.lower()
-        fname = field.name.lower()
-        gadget = self.gadgets["shoulder.c.function_definition"]
-        gadget.name = "aarch64_" + rname + "_" + fname + "_disable"
-        gadget.args = []
+        if reg.writeable():
+            gadget = self.gadgets["shoulder.c.function_definition"]
+            gadget.return_type = "void"
+            gadget.args = []
+            gadget.name = "{prefix}_{rname}_{fname}_{suffix}".format(
+                prefix=config.c_prefix,
+                rname=reg.name.lower(),
+                fname=field.name.lower(),
+                suffix=config.bit_clear_function
+            )
 
-        if reg.access_mechanisms["msr_register"]:
-            am = reg.access_mechanisms["msr_register"][0]
-            self._generate_msr_bitfield_disable(outfile, reg, field, am)
-
-        elif reg.access_mechanisms["mcr"]:
-            am = reg.access_mechanisms["mcr"][0]
-            self._generate_mcr_bitfield_disable(outfile, reg, am)
-
-        elif reg.access_mechanisms["mcrr"]:
-            am = reg.access_mechanisms["mcrr"][0]
-            self._generate_mcrr_bitfield_disable(outfile, reg, am)
-
-        elif reg.access_mechanisms["msr_banked"]:
-            am = reg.access_mechanisms["msr_banked"][0]
-            self._generate_msr_banked_bitfield_disable(outfile, reg, am)
-
-        elif reg.access_mechanisms["msr_immediate"]:
-            am = reg.access_mechanisms["msr_immediate"][0]
-            self._generate_msr_immediate_bitfield_disable(outfile, reg, am)
-
-        elif reg.access_mechanisms["str"]:
-            am = reg.access_mechanisms["str"][0]
-            self._generate_str_bitfield_disable(outfile, reg, am)
+            self._bitfield_clear(outfile, reg, field)
 
     @shoulder.gadget.c.function_definition
-    def _generate_msr_bitfield_disable(self, outfile, reg, field, am):
-        outfile.write("TODO: clear bitfield using msr")
+    def _bitfield_clear(self, outfile, reg, field):
+        f_body = "{size} val = {reg_get}();\n"
+        f_body += "{reg_set}(val & ~{mask});"
 
-    @shoulder.gadget.c.function_definition
-    def _generate_mcr_bitfield_disable(self, outfile, reg, am):
-        outfile.write("TODO: clear bitfield using mcr")
+        f_body = f_body.format(
+            size=self._register_size_type(reg),
+            mask=self._field_mask_string(reg, field),
+            reg_get=self._register_read_function_name(reg),
+            reg_set=self._register_write_function_name(reg)
+        )
 
-    @shoulder.gadget.c.function_definition
-    def _generate_mcrr_bitfield_disable(self, outfile, reg, am):
-        outfile.write("TODO: clear bitfield using mcrr")
-
-    @shoulder.gadget.c.function_definition
-    def _generate_msr_banked_bitfield_disable(self, outfile, reg, am):
-        outfile.write("TODO: clear bitfield using msr_banked")
-
-    @shoulder.gadget.c.function_definition
-    def _generate_msr_immediate_bitfield_disable(self, outfile, reg, am):
-        outfile.write("TODO: clear bitfield using msr_immediate")
-
-    @shoulder.gadget.c.function_definition
-    def _generate_vmsr_bitfield_disable(self, outfile, reg, am):
-        outfile.write("TODO: clear bitfield using vmsr")
-
-    @shoulder.gadget.c.function_definition
-    def _generate_str_bitfield_disable(self, outfile, reg, am):
-        outfile.write("TODO: clear bitfield using str")
+        outfile.write(f_body)
 
 # ----------------------------------------------------------------------------
-# bitfield_disable_val
+# bitfield_clear_val
 # ----------------------------------------------------------------------------
-    def _generate_bitfield_disable_val(self, outfile, reg, field):
+    def _generate_bitfield_clear_val(self, outfile, reg, field):
         """
         Generate a C function that clears the given bitfield (1) in an integer
         value
         """
 
-        rname = reg.name.lower()
-        fname = field.name.lower()
-        gadget = self.gadgets["shoulder.c.function_definition"]
-        size_type = gadget.return_type
+        if reg.writeable():
+            size_type = self._register_size_type(reg)
 
-        gadget.name = "aarch64_" + rname + "_" + fname + "_disable_val"
-        gadget.args = [(size_type, "arg1"), (size_type, "arg2")]
+            gadget = self.gadgets["shoulder.c.function_definition"]
+            gadget.return_type = size_type
+            gadget.args = [(size_type, "val")]
+            gadget.name = "{prefix}_{rname}_{fname}_{suffix}".format(
+                prefix=config.c_prefix,
+                rname=reg.name.lower(),
+                fname=field.name.lower(),
+                suffix=config.bit_clear_function + "_val"
+            )
 
-        self._bitfield_disable_val(outfile, reg, field)
+            self._bitfield_clear_val(outfile, reg, field)
 
     @shoulder.gadget.c.function_definition
-    def _bitfield_disable_val(self, outfile, reg, field):
-        func = "CLEAR_BITS_BY_MASK_FUNC(val, {mask})".format(mask=field.lsb)
-        outfile.write(func)
+    def _bitfield_clear_val(self, outfile, reg, field):
+        f_body = "return val & ~{mask};".format(
+            mask=self._field_mask_string(reg, field)
+        )
+        outfile.write(f_body)
 
 # ----------------------------------------------------------------------------
 # bitfield_is_disabled
 # ----------------------------------------------------------------------------
-    def _generate_bitfield_is_disabled(self, outfile, reg, field):
+    def _generate_bitfield_is_clear(self, outfile, reg, field):
         """
         Generate a C function that checks if the given bitfield is disabled (0)
         in the given register
         """
 
-        rname = reg.name.lower()
-        fname = field.name.lower()
-        gadget = self.gadgets["shoulder.c.function_definition"]
-        gadget.name = "aarch64_" + rname + "_" + fname + "_is_disabled"
-        gadget.args = []
+        if reg.readable():
+            size_type = self._register_size_type(reg)
 
-        if reg.access_mechanisms["msr_register"]:
-            am = reg.access_mechanisms["msr_register"][0]
-            self._generate_msr_bitfield_is_disabled(outfile, reg, field, am)
+            gadget = self.gadgets["shoulder.c.function_definition"]
+            gadget.return_type = size_type
+            gadget.args = []
+            gadget.name = "{prefix}_{rname}_{fname}_{suffix}".format(
+                prefix=config.c_prefix,
+                rname=reg.name.lower(),
+                fname=field.name.lower(),
+                suffix=config.is_bit_cleared_function
+            )
 
-        elif reg.access_mechanisms["mcr"]:
-            am = reg.access_mechanisms["mcr"][0]
-            self._generate_mcr_bitfield_is_disabled(outfile, reg, am)
-
-        elif reg.access_mechanisms["mcrr"]:
-            am = reg.access_mechanisms["mcrr"][0]
-            self._generate_mcrr_bitfield_is_disabled(outfile, reg, am)
-
-        elif reg.access_mechanisms["msr_banked"]:
-            am = reg.access_mechanisms["msr_banked"][0]
-            self._generate_msr_banked_bitfield_is_disabled(outfile, reg, am)
-
-        elif reg.access_mechanisms["msr_immediate"]:
-            am = reg.access_mechanisms["msr_immediate"][0]
-            self._generate_msr_immediate_bitfield_is_disabled(outfile, reg, am)
-
-        elif reg.access_mechanisms["str"]:
-            am = reg.access_mechanisms["str"][0]
-            self._generate_str_bitfield_is_disabled(outfile, reg, am)
+            self._bitfield_is_clear(outfile, reg, field)
 
     @shoulder.gadget.c.function_definition
-    def _generate_msr_bitfield_is_disabled(self, outfile, reg, field, am):
-        func = "IS_SYSREG_BIT_DISABLED_FUNC({accessname}, {lsb})".format(
-            accessname=hex(am.binary_encoded()),
-            lsb=field.lsb
+    def _bitfield_is_clear(self, outfile, reg, field):
+        f_body = "{size} val = {reg_get}();\n"
+        f_body += "return (val & {mask}) == 0;"
+
+        f_body = f_body.format(
+            size=self._register_size_type(reg),
+            mask=self._field_mask_string(reg, field),
+            reg_get=self._register_read_function_name(reg),
         )
-        outfile.write(func)
 
-    @shoulder.gadget.c.function_definition
-    def _generate_mcr_bitfield_is_disabled(self, outfile, reg, am):
-        outfile.write("TODO: check bitfield disabled using mcr")
-
-    @shoulder.gadget.c.function_definition
-    def _generate_mcrr_bitfield_is_disabled(self, outfile, reg, am):
-        outfile.write("TODO: check bitfield disabled using mcrr")
-
-    @shoulder.gadget.c.function_definition
-    def _generate_msr_banked_bitfield_is_disabled(self, outfile, reg, am):
-        outfile.write("TODO: check bitfield disabled using msr_banked")
-
-    @shoulder.gadget.c.function_definition
-    def _generate_msr_immediate_bitfield_is_disabled(self, outfile, reg, am):
-        outfile.write("TODO: check bitfield disabled using msr_immediate")
-
-    @shoulder.gadget.c.function_definition
-    def _generate_vmsr_bitfield_is_disabled(self, outfile, reg, am):
-        outfile.write("TODO: check bitfield disabled using vmsr")
-
-    @shoulder.gadget.c.function_definition
-    def _generate_str_bitfield_is_disabled(self, outfile, reg, am):
-        outfile.write("TODO: check bitfield disabled using str")
+        outfile.write(f_body)
 
 # ----------------------------------------------------------------------------
 # bitfield_is_disabled_val
 # ----------------------------------------------------------------------------
-    def _generate_bitfield_is_disabled_val(self, outfile, reg, field):
+    def _generate_bitfield_is_clear_val(self, outfile, reg, field):
         """
         Generate a C function that checks if the given bitfield is cleared (0)
         in an integer value
         """
 
-        rname = reg.name.lower()
-        fname = field.name.lower()
-        gadget = self.gadgets["shoulder.c.function_definition"]
-        size_type = gadget.return_type
+        if reg.readable():
+            size_type = self._register_size_type(reg)
 
-        gadget.name = "aarch64_" + rname + "_" + fname + "_is_disabled_val"
-        gadget.args = [(size_type, "val")]
+            gadget = self.gadgets["shoulder.c.function_definition"]
+            gadget.return_type = size_type
+            gadget.args = [(size_type, "val")]
+            gadget.name = "{prefix}_{rname}_{fname}_{suffix}".format(
+                prefix=config.c_prefix,
+                rname=reg.name.lower(),
+                fname=field.name.lower(),
+                suffix=config.is_bit_cleared_function + "_val"
+            )
 
-        self._generate_bitfield_is_disabled_value(outfile, reg, field)
+            self._bitfield_is_clear_val(outfile, reg, field)
 
     @shoulder.gadget.c.function_definition
-    def _generate_bitfield_is_disabled_value(self, outfile, reg, field):
-        func = "IS_BIT_DISABLED_FUNC(val, {lsb})".format(lsb=field.lsb)
-        outfile.write(func)
+    def _bitfield_is_clear_val(self, outfile, reg, field):
+        f_body = "return (val & {mask}) == 0;"
+
+        f_body = f_body.format(
+            size=self._register_size_type(reg),
+            mask=self._field_mask_string(reg, field),
+            reg_get=self._register_read_function_name(reg),
+        )
+
+        outfile.write(f_body)
 
 # ----------------------------------------------------------------------------
 # field_get
@@ -656,59 +581,34 @@ class CHeaderGenerator2(AbstractGenerator):
         Generate a C function that reads the given field from the given register
         """
 
-        rname = reg.name.lower()
-        fname = field.name.lower()
-        gadget = self.gadgets["shoulder.c.function_definition"]
-        gadget.name = "aarch64_" + rname + "_" + fname + "_get"
-        gadget.args = []
+        if reg.readable():
+            size_type = self._register_size_type(reg)
 
-        if reg.access_mechanisms["mrs_register"]:
-            am = reg.access_mechanisms["mrs_register"][0]
-            self._generate_mrs_register_field_get(outfile, reg, am)
+            gadget = self.gadgets["shoulder.c.function_definition"]
+            gadget.return_type = size_type
+            gadget.args = []
+            gadget.name = "{prefix}_{rname}_{fname}_{suffix}".format(
+                prefix=config.c_prefix,
+                rname=reg.name.lower(),
+                fname=field.name.lower(),
+                suffix=config.register_field_read_function
+            )
 
-        elif reg.access_mechanisms["mrs_banked"]:
-            am = reg.access_mechanisms["mrs_banked"][0]
-            self._generate_mrs_banked_field_get(outfile, reg, am)
-
-        elif reg.access_mechanisms["mrc"]:
-            am = reg.access_mechanisms["mrc"][0]
-            self._generate_mrc_field_get(outfile, reg, am)
-
-        elif reg.access_mechanisms["mrrc"]:
-            am = reg.access_mechanisms["mrrc"][0]
-            self._generate_mrrc_field_get(outfile, reg, am)
-
-        elif reg.access_mechanisms["vmrs"]:
-            am = reg.access_mechanisms["vmrs"][0]
-            self._generate_vmrs_field_get(outfile, reg, am)
-
-        elif reg.access_mechanisms["ldr"]:
-            am = reg.access_mechanisms["ldr"][0]
-            self._generate_ldr_field_get(outfile, reg, am)
+            self._field_get(outfile, reg, field)
 
     @shoulder.gadget.c.function_definition
-    def _generate_mrs_register_field_get(self, outfile, reg, am):
-        outfile.write("TODO: get field using mrs_register")
+    def _field_get(self, outfile, reg, field):
+        f_body = "{size} val = {reg_get}();\n"
+        f_body += "return (val | {mask}) >> {lsb};"
 
-    @shoulder.gadget.c.function_definition
-    def _generate_mrs_banked_field_get(self, outfile, reg, am):
-        outfile.write("TODO: get field using mrs_banked")
+        f_body = f_body.format(
+            size=self._register_size_type(reg),
+            mask=self._field_mask_string(reg, field),
+            lsb=self._field_lsb_string(reg, field),
+            reg_get=self._register_read_function_name(reg)
+        )
 
-    @shoulder.gadget.c.function_definition
-    def _generate_mrc_field_get(self, outfile, reg, am):
-        outfile.write("TODO: get field using mrc")
-
-    @shoulder.gadget.c.function_definition
-    def _generate_mrrc_field_get(self, outfile, reg, am):
-        outfile.write("TODO: get field using mrrc")
-
-    @shoulder.gadget.c.function_definition
-    def _generate_vmrs_field_get(self, outfile, reg, am):
-        outfile.write("TODO: get field using vmrs")
-
-    @shoulder.gadget.c.function_definition
-    def _generate_ldr_field_get(self, outfile, reg, am):
-        outfile.write("TODO: get field using ldr")
+        outfile.write(f_body)
 
 # ----------------------------------------------------------------------------
 # field_get_val
@@ -718,19 +618,32 @@ class CHeaderGenerator2(AbstractGenerator):
         Generate a C function that reads the given field from an integer value
         """
 
-        rname = reg.name.lower()
-        fname = field.name.lower()
-        gadget = self.gadgets["shoulder.c.function_definition"]
-        size_type = gadget.return_type
+        if reg.readable():
+            size_type = self._register_size_type(reg)
 
-        gadget.name = "aarch64_" + rname + "_" + fname + "_get_val"
-        gadget.args = [(size_type, "val")]
+            gadget = self.gadgets["shoulder.c.function_definition"]
+            gadget.return_type = size_type
+            gadget.args = [(size_type, "val")]
+            gadget.name = "{prefix}_{rname}_{fname}_{suffix}".format(
+                prefix=config.c_prefix,
+                rname=reg.name.lower(),
+                fname=field.name.lower(),
+                suffix=config.register_field_read_function + "_val"
+            )
 
-        self._generate_field_get_val_(outfile, reg, field)
+            self._field_get_val(outfile, reg, field)
 
     @shoulder.gadget.c.function_definition
-    def _generate_field_get_val_(self, outfile, reg, field):
-        outfile.write("TODO: get field from integer value")
+    def _field_get_val(self, outfile, reg, field):
+        f_body = "return (val | {mask}) >> {lsb};"
+
+        f_body = f_body.format(
+            size=self._register_size_type(reg),
+            mask=self._field_mask_string(reg, field),
+            lsb=self._field_lsb_string(reg, field)
+        )
+
+        outfile.write(f_body)
 
 # ----------------------------------------------------------------------------
 # field_set
@@ -740,60 +653,36 @@ class CHeaderGenerator2(AbstractGenerator):
         Generate a C function that writes the given field to the given register
         """
 
-        rname = reg.name.lower()
-        fname = field.name.lower()
-        gadget = self.gadgets["shoulder.c.function_definition"]
-        gadget.name = "aarch64_" + rname + "_" + fname + "_set"
-        size_type = gadget.return_type
-        gadget.args = [(size_type, "val")]
+        if reg.writeable():
+            size_type = self._register_size_type(reg)
 
-        if reg.access_mechanisms["mrs_register"]:
-            am = reg.access_mechanisms["mrs_register"][0]
-            self._generate_mrs_register_field_set(outfile, reg, am)
+            gadget = self.gadgets["shoulder.c.function_definition"]
+            gadget.return_type = size_type
+            gadget.args = [(size_type, "val")]
+            gadget.name = "{prefix}_{rname}_{fname}_{suffix}".format(
+                prefix=config.c_prefix,
+                rname=reg.name.lower(),
+                fname=field.name.lower(),
+                suffix=config.register_field_write_function
+            )
 
-        elif reg.access_mechanisms["mrs_banked"]:
-            am = reg.access_mechanisms["mrs_banked"][0]
-            self._generate_mrs_banked_field_set(outfile, reg, am)
-
-        elif reg.access_mechanisms["mrc"]:
-            am = reg.access_mechanisms["mrc"][0]
-            self._generate_mrc_field_set(outfile, reg, am)
-
-        elif reg.access_mechanisms["mrrc"]:
-            am = reg.access_mechanisms["mrrc"][0]
-            self._generate_mrrc_field_set(outfile, reg, am)
-
-        elif reg.access_mechanisms["vmrs"]:
-            am = reg.access_mechanisms["vmrs"][0]
-            self._generate_vmrs_field_set(outfile, reg, am)
-
-        elif reg.access_mechanisms["ldr"]:
-            am = reg.access_mechanisms["ldr"][0]
-            self._generate_ldr_field_set(outfile, reg, am)
+            self._field_set(outfile, reg, field)
 
     @shoulder.gadget.c.function_definition
-    def _generate_mrs_register_field_set(self, outfile, reg, am):
-        outfile.write("TODO: set field using mrs_register")
+    def _field_set(self, outfile, reg, field):
+        f_body = "{size} reg = {reg_get}();\n"
+        f_body += "reg = reg & ((val << {lsb}) & {mask});\n"
+        f_body += "{reg_set}(reg);"
 
-    @shoulder.gadget.c.function_definition
-    def _generate_mrs_banked_field_set(self, outfile, reg, am):
-        outfile.write("TODO: set field using mrs_banked")
+        f_body = f_body.format(
+            size=self._register_size_type(reg),
+            mask=self._field_mask_string(reg, field),
+            lsb=self._field_lsb_string(reg, field),
+            reg_get=self._register_read_function_name(reg),
+            reg_set=self._register_write_function_name(reg)
+        )
 
-    @shoulder.gadget.c.function_definition
-    def _generate_mrc_field_set(self, outfile, reg, am):
-        outfile.write("TODO: set field using mrc")
-
-    @shoulder.gadget.c.function_definition
-    def _generate_mrrc_field_set(self, outfile, reg, am):
-        outfile.write("TODO: set field using mrrc")
-
-    @shoulder.gadget.c.function_definition
-    def _generate_vmrs_field_set(self, outfile, reg, am):
-        outfile.write("TODO: set field using vmrs")
-
-    @shoulder.gadget.c.function_definition
-    def _generate_ldr_field_set(self, outfile, reg, am):
-        outfile.write("TODO: set field using ldr")
+        outfile.write(f_body)
 
 # ----------------------------------------------------------------------------
 # field_set_val
@@ -803,16 +692,74 @@ class CHeaderGenerator2(AbstractGenerator):
         Generate a C function that writes the given field to an integer value
         """
 
-        rname = reg.name.lower()
-        fname = field.name.lower()
-        gadget = self.gadgets["shoulder.c.function_definition"]
-        size_type = gadget.return_type
+        if reg.writeable():
+            size_type = self._register_size_type(reg)
 
-        gadget.name = "aarch64_" + rname + "_" + fname + "_set_val"
-        gadget.args = [(size_type, "arg1"), (size_type, "arg2")]
+            gadget = self.gadgets["shoulder.c.function_definition"]
+            gadget.return_type = size_type
+            gadget.args = [(size_type, "field_val"), (size_type, "reg_val")]
+            gadget.name = "{prefix}_{rname}_{fname}_{suffix}".format(
+                prefix=config.c_prefix,
+                rname=reg.name.lower(),
+                fname=field.name.lower(),
+                suffix=config.register_field_write_function + "_val"
+            )
 
-        self._generate_field_set_val_(outfile, reg, field)
+            self._field_set_val(outfile, reg, field)
 
     @shoulder.gadget.c.function_definition
-    def _generate_field_set_val_(self, outfile, reg, field):
-        outfile.write("TODO: set field to integer value")
+    def _field_set_val(self, outfile, reg, field):
+        f_body = "return reg_val & ((field_val << {lsb}) & {mask});\n"
+
+        f_body = f_body.format(
+            size=self._register_size_type(reg),
+            mask=self._field_mask_string(reg, field),
+            lsb=self._field_lsb_string(reg, field)
+        )
+
+        outfile.write(f_body)
+
+# ----------------------------------------------------------------------------
+# utilities
+# ----------------------------------------------------------------------------
+    def _field_mask_hex_string(self, reg, field):
+        mask_val = 0
+        for i in range(field.lsb, field.msb + 1):
+            mask_val |= 1 << i
+
+        if reg.size == 32:
+            return "{0:#0{1}x}".format(mask_val, 10)
+        else:
+            return "{0:#0{1}x}".format(mask_val, 18)
+
+    def _field_mask_string(self, reg, field):
+        return "{reg}_{field}_mask".format(
+            reg=reg.name.lower(),
+            field=field.name.lower()
+        )
+
+    def _field_lsb_string(self, reg, field):
+        return "{reg}_{field}_lsb".format(
+            reg=reg.name.lower(),
+            field=field.name.lower()
+        )
+
+    def _register_size_type(self, reg):
+        if reg.size == 32:
+            return "uint32_t"
+        else:
+            return "uint64_t"
+
+    def _register_read_function_name(self, reg):
+        return "{prefix}_{reg_name}_{read}".format(
+            prefix=config.c_prefix,
+            reg_name=reg.name.lower(),
+            read=config.register_read_function
+        )
+
+    def _register_write_function_name(self, reg):
+        return "{prefix}_{reg_name}_{write}".format(
+            prefix=config.c_prefix,
+            reg_name=reg.name.lower(),
+            write=config.register_write_function
+        )
