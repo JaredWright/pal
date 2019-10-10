@@ -28,10 +28,28 @@ class Field():
     """ Models a single named field (or bitfield) in a register fieldset """
 
     name: str
-    """ Name of the field """
+    """ The abbreviated/symbolic/accronym name for this field """
 
     msb: int
     """ Most significant bit that the field occupies within a register """
 
     lsb: int
     """ Least significant bit that the field occupies within a register """
+
+    long_name: str = ""
+    """ The non-abbreviated/spelled out name for this field """
+
+    readable: bool = False
+    """ True if this field is readable  """
+
+    writable: bool = False
+    """ True if this field is writable  """
+
+    lockable: bool = False
+    """ True if this field can be locked  """
+
+    write_once: bool = False
+    """ True if this field becomes locked after writing to it once  """
+
+    write_1_clear: bool = False
+    """ True if this field is cleared (set to '0') by writing a '1' to it  """
