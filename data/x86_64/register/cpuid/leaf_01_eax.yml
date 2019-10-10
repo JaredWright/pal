@@ -1,0 +1,59 @@
+- name: leaf_01_eax
+  long_name: "Basic CPUID Information Leaf 01 Output EAX"
+  purpose: "Version Information: Type, Family, Model, and Stepping ID"
+  size: 32
+  
+  access_mechanisms:
+      - name: cpuid
+        leaf: 0x1
+        subleaf: 0x0
+        output: eax
+  
+  fieldsets:
+      - name: latest
+        condition: "Fieldset valid on latest version of the Intel architecture"
+        size: 32 
+        reserved0_mask: 0xF000C000
+
+        fields:
+            - name: stepping_id
+              long_name: "Stepping ID"
+              lsb: 0
+              msb: 3
+              mask: 0x0000000F
+              readable: True
+
+            - name: model
+              long_name: "Model"
+              lsb: 4
+              msb: 7
+              mask: 0x000000F0
+              readable: True
+
+            - name: family_id
+              long_name: "Family ID"
+              lsb: 8 
+              msb: 11
+              mask: 0x00000F00
+              readable: True
+
+            - name: processor_type
+              long_name: "Processor Type"
+              lsb: 12
+              msb: 13
+              mask: 0x00003000
+              readable: True
+
+            - name: extended_model_id
+              long_name: "Extended Model ID"
+              lsb: 16
+              msb: 19
+              mask: 0x000F0000
+              readable: True
+
+            - name: extended_family_id
+              long_name: "Extended Family ID"
+              lsb: 20
+              msb: 27
+              mask: 0x0FF00000
+              readable: True
