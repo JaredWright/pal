@@ -18,15 +18,12 @@
       - name: latest
         condition: "Fieldset valid on latest version of the Intel architecture"
         size: 64
-        reserved0_mask: 0xFFFFFFFF00000000
-        preserved_mask: 0x000000001FFAFFC0
 
         fields:
             - name: pe
               long_name: "Protection Enable"
               lsb: 0
               msb: 0
-              mask: 0x0000000000000001
               readable: True
               writable: True
               description: |
@@ -42,7 +39,6 @@
               long_name: "Monitor Coprocessor"
               lsb: 1
               msb: 1
-              mask: 0x0000000000000002
               readable: True
               writable: True
               description: |
@@ -61,7 +57,6 @@
               long_name: "Emulation"
               lsb: 2
               msb: 2
-              mask: 0x0000000000000004
               readable: True
               writable: True
               description: |
@@ -76,7 +71,6 @@
               long_name: "Task Switched"
               lsb: 3
               msb: 3
-              mask: 0x0000000000000008
               readable: True
               writable: True
               description: |
@@ -94,7 +88,6 @@
               long_name: "Extension Type"
               lsb: 4
               msb: 4
-              mask: 0x0000000000000010
               readable: True
               writable: True
               description: |
@@ -111,7 +104,6 @@
               long_name: "Numeric Error"
               lsb: 5
               msb: 5
-              mask: 0x0000000000000020
               readable: True
               writable: True
               description: |
@@ -128,11 +120,18 @@
                   or WAIT/FWAIT instruction.
                   "
 
+            - name: reserved
+              long_name: "Reserved"
+              lsb: 6
+              msb: 15
+              readable: False
+              writable: False
+              preserved: True
+
             - name: wp
               long_name: "Write Protect"
               lsb: 16
               msb: 16
-              mask: 0x0000000000010000
               readable: True
               writable: True
               description: |
@@ -146,11 +145,18 @@
                   process (forking) used by operating systems such as UNIX.
                   "
 
+            - name: reserved
+              long_name: "Reserved"
+              lsb: 17
+              msb: 17
+              readable: False
+              writable: False
+              preserved: True
+
             - name: am
               long_name: "Alignment Mask"
               lsb: 18
               msb: 18
-              mask: 0x0000000000040000
               readable: True
               writable: True
               description: |
@@ -163,11 +169,18 @@
                   mode.
                   "
 
+            - name: reserved
+              long_name: "Reserved"
+              lsb: 19
+              msb: 28
+              readable: False
+              writable: False
+              preserved: True
+
             - name: nw
               long_name: "Not Write-through"
               lsb: 29
               msb: 29
-              mask: 0x0000000020000000
               readable: True
               writable: True
               description: |
@@ -185,7 +198,6 @@
               long_name: "Cache Disable"
               lsb: 30
               msb: 30
-              mask: 0x0000000040000000
               readable: True
               writable: True
               description: |
@@ -204,7 +216,6 @@
               long_name: "Paging"
               lsb: 31
               msb: 31
-              mask: 0x0000000080000000
               readable: True
               writable: True
               description: |
@@ -217,3 +228,11 @@
                   general-protection exception (#GP). See also: Chapter 4,
                   'Paging.'
                   "
+
+            - name: reserved
+              long_name: "Reserved"
+              lsb: 32
+              msb: 63
+              readable: False
+              writable: False
+              reserved0: True

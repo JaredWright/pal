@@ -14,15 +14,12 @@
       - name: latest
         condition: "Fieldset valid on latest version of the Intel architecture"
         size: 64
-        reserved0_mask: 0xFFFFFFFF00000000
-        preserved_mask: 0x0000000000000000
 
         fields:
             - name: <Field.name>
               long_name: <Field.long_name>
               lsb: <Field.lsb>
               msb: <Field.lsb>
-              mask: <Field.mask>
               readable: True
               writable: True
               description: |

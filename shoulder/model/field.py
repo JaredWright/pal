@@ -53,3 +53,12 @@ class Field():
 
     write_1_clear: bool = False
     """ True if this field is cleared (set to '0') by writing a '1' to it  """
+
+    reserved0: bool = False
+    """ True if the value of this field is reserved 0  """
+
+    reserved1: bool = False
+    """ True if the value of this field is reserved 1  """
+
+    preserved: bool = False
+    """ True if the value of this field should be preserved across writes  """

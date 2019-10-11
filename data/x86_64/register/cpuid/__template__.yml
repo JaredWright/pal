@@ -13,14 +13,12 @@
       - name: latest
         condition: "Fieldset valid on latest version of the Intel architecture"
         size: <Fieldset.size> 
-        reserved0_mask: <Fieldset.reserved0_mask>
 
         fields:
             - name: <Field.name>
               long_name: <Field.long_name>
               lsb: <Field.lsb>
               msb: <Field.lsb>
-              mask: <Field.mask>
               readable: True
               description: |
                   "

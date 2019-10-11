@@ -32,23 +32,14 @@ class Fieldset():
     """ Models a collection of named fields that apply to a register either """
     """ always or under a particular condition """
 
-    name: str
-    """ The name of this fieldset """
-
-    size: int
+    size: int = 0
     """ The size (width) of this fieldset """
+
+    name: str = ""
+    """ The name of this fieldset """
 
     condition: str = ""
     """ A text description of conditions under which this fieldset is valid """
-
-    reserved0_mask: int = 0
-    """ A bitmask that represents reserved0 bits in this fieldset """
-
-    reserved1_mask: int = 0
-    """ A bitmask that represents reserved1 bits in this fieldset """
-
-    preserved_mask: int = 0
-    """ A bitmask that represents preserved bits in this fieldset """
 
     fields: List[Field] = dataclass_field(default_factory= lambda: [])
     """ A list of fields that make up this fieldset """

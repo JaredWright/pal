@@ -13,14 +13,12 @@
       - name: latest
         condition: "Fieldset valid on latest version of the Intel architecture"
         size: 32 
-        reserved0_mask: 0x00000000
 
         fields:
             - name: brand_index
               long_name: "Brand index"
               lsb: 0
               msb: 7
-              mask: 0x000000FF
               readable: True
               description: |
                   "
@@ -32,9 +30,8 @@
 
             - name: clflush_line_size
               long_name: "CLFLUSH line size"
-              lsb: 4
-              msb: 7
-              mask: 0x000000F0
+              lsb: 8
+              msb: 15
               readable: True
               description: |
                   "
@@ -46,9 +43,8 @@
 
             - name: max_addressable_ids
               long_name: "Maximum number of addressable IDs"
-              lsb: 8 
-              msb: 11
-              mask: 0x00000F00
+              lsb: 16
+              msb: 23
               readable: True
               description: |
                   "
@@ -62,9 +58,8 @@
 
             - name: initial_apic_id
               long_name: "Initial APIC ID"
-              lsb: 12
-              msb: 13
-              mask: 0x00003000
+              lsb: 24
+              msb: 31
               readable: True
               description: |
                   "

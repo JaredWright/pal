@@ -14,19 +14,15 @@
       - name: latest
         condition: "Fieldset valid on latest version of the Intel architecture"
         size: 64
-        reserved0_mask: 0xFFFFFFFFFFF900F8
 
         fields:
             - name: lock_bit
               long_name: "Lock bit"
               lsb: 0
               msb: 0
-              mask: 0x0000000000000001
               readable: True
               writable: True
-              lockable: False
               write_once: True
-              write_1_clear: False
               description: |
                   "
                   Lock bit (R/WO): (1 = locked). When set, locks this MSR from
@@ -49,12 +45,9 @@
               long_name: "Enable VMX inside SMX operation"
               lsb: 1
               msb: 1
-              mask: 0x0000000000000002
               readable: True
               writable: True
               lockable: True
-              write_once: False
-              write_1_clear: False
               description: |
                   "
                   Enable VMX inside SMX operation (R/WL): This bit enables a
@@ -72,12 +65,8 @@
               long_name: "Enable VMX outside SMX operation"
               lsb: 2
               msb: 2
-              mask: 0x0000000000000004
               readable: True
               writable: True
-              lockable: False
-              write_once: False
-              write_1_clear: False
               description: |
                   "
                   Enable VMX outside SMX operation (R/WL): This bit enables VMX
@@ -90,16 +79,18 @@
                   If CPUID.01H:ECX[5] = 1
                   "
 
+            - name: reserved
+              long_name: "Reserved"
+              lsb: 3
+              msb: 7
+              preserved: True
+
             - name: senter_local_function_enables
               long_name: "SENTER Local Function Enables"
               lsb: 8
               msb: 14 
-              mask: 0x0000000000007F00
               readable: True
               writable: True
-              lockable: False
-              write_once: False
-              write_1_clear: False
               description: |
                   "
                   SENTER Local Function Enables (R/WL): When set, each bit in
@@ -116,12 +107,8 @@
               long_name: "SENTER Global Enable"
               lsb: 15
               msb: 15 
-              mask: 0x0000000000008000
               readable: True
               writable: True
-              lockable: False
-              write_once: False
-              write_1_clear: False
               description: |
                   "
                   SENTER Global Enable (R/WL): This bit must be set to enable
@@ -133,16 +120,18 @@
                   If CPUID.01H:ECX[6] = 1
                   "
 
+            - name: reserved
+              long_name: "Reserved"
+              lsb: 16
+              msb: 16
+              preserved: True
+
             - name: sgx_launch_control_enable
               long_name: "SGX Launch Control Enable"
               lsb: 17
               msb: 17 
-              mask: 0x0000000000020000
               readable: True
               writable: True
-              lockable: False
-              write_once: False
-              write_1_clear: False
               description: |
                   "
                   SGX Launch Control Enable (R/WL): This bit must be set to
@@ -158,12 +147,8 @@
               long_name: "SGX Global Enable"
               lsb: 18
               msb: 18 
-              mask: 0x0000000000040000
               readable: True
               writable: True
-              lockable: False
-              write_once: False
-              write_1_clear: False
               description: |
                   "
                   SGX Global Enable (R/WL): This bit must be set to enable SGX
@@ -174,16 +159,18 @@
                   If CPUID.(EAX=07H, ECX=0H): EBX[2] = 1
                   "
 
+            - name: reserved
+              long_name: "Reserved"
+              lsb: 19
+              msb: 19
+              preserved: True
+
             - name: lmce
               long_name: "LMCE On"
               lsb: 20
               msb: 20 
-              mask: 0x0000000000100000
               readable: True
               writable: True
-              lockable: False
-              write_once: False
-              write_1_clear: False
               description: |
                   "
                   LMCE On (R/WL): When set, system software can program the
@@ -194,3 +181,9 @@
                   "
                   If IA32_MCG_CAP[27] = 1
                   "
+
+            - name: reserved
+              long_name: "Reserved"
+              lsb: 21
+              msb: 63
+              preserved: True
