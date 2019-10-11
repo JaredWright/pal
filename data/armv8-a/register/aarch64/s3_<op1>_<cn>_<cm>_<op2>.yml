@@ -1,0 +1,20 @@
+- name: S3_<op1>_<Cn>_<Cm>_<op2>
+  long_name: "IMPLEMENTATION DEFINED registers"
+  purpose: |
+       "
+       This area of the instruction set space is reserved for IMPLEMENTATION
+       DEFINED registers.
+       "
+  size: 64
+  arch: armv8-a
+  execution_state: aarch64
+  is_internal: True
+
+  access_mechanisms:
+  fieldsets:
+      - name: fieldset_1
+        size: 64
+
+          - name: IMPLEMENTATION_DEFINED
+            lsb: 0
+            msb: 63
