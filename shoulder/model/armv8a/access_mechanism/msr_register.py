@@ -49,6 +49,9 @@ class MSRRegister(AbstractAccessMechanism):
     rt: bytes = 0b0
     """ Source general purpose register (default = x0) """
 
+    name: str = "msr_register"
+    """ The name of this access mechanism """
+
     def is_read(self):
         return False
 

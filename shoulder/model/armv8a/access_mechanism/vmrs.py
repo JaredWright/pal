@@ -33,6 +33,9 @@ class VMRS(AbstractAccessMechanism):
     operand_mnemonic: str
     """ The operand mnemonic of the register to be accessed """
 
+    name: str = "vmrs"
+    """ The name of this access mechanism """
+
     def is_read(self):
         return True
 

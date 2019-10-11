@@ -43,6 +43,9 @@ class MCRR(AbstractAccessMechanism):
     rt2: bytes = 0b1
     """ Source general purpose register 2 (default = r1) """
 
+    name: str = "mcrr"
+    """ The name of this access mechanism """
+
     def is_read(self):
         return False
 

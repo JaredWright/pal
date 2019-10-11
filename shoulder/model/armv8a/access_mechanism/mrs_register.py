@@ -49,6 +49,9 @@ class MRSRegister(AbstractAccessMechanism):
     rt: bytes = 0b0
     """ Destination general purpose register (default = x0) """
 
+    name: str = "mrs_register"
+    """ The name of this access mechanism """
+
     def is_read(self):
         return True
 

@@ -33,6 +33,9 @@ class STR(AbstractAccessMechanism):
     offset: int
     """ Register offset from base address """
 
+    name: str = "str"
+    """ The name of this access mechanism """
+
     def is_read(self):
         return False
 

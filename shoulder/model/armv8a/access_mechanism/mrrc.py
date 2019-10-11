@@ -43,6 +43,9 @@ class MRRC(AbstractAccessMechanism):
     rt2: bytes = 1
     """ Source general purpose register 2 (default = r1) """
 
+    name: str = "mrrc"
+    """ The name of this access mechanism """
+
     def is_read(self):
         return True
 

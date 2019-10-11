@@ -33,6 +33,9 @@ class LDR(AbstractAccessMechanism):
     offset: int
     """ Register offset """
 
+    name: str = "ldr"
+    """ The name of this access mechanism """
+
     def is_read(self):
         return True
 

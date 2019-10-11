@@ -39,6 +39,9 @@ class MSRBanked(AbstractAccessMechanism):
     operand_mnemonic: str
     """ The operand mnemonic of the register to be accessed """
 
+    name: str = "msr_banked"
+    """ The name of this access mechanism """
+
     def is_read(self):
         return False
 
