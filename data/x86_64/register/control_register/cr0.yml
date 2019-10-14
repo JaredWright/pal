@@ -124,8 +124,6 @@
               long_name: "Reserved"
               lsb: 6
               msb: 15
-              readable: False
-              writable: False
               preserved: True
 
             - name: wp
@@ -149,8 +147,6 @@
               long_name: "Reserved"
               lsb: 17
               msb: 17
-              readable: False
-              writable: False
               preserved: True
 
             - name: am
@@ -173,8 +169,6 @@
               long_name: "Reserved"
               lsb: 19
               msb: 28
-              readable: False
-              writable: False
               preserved: True
 
             - name: nw
@@ -233,6 +227,4 @@
               long_name: "Reserved"
               lsb: 32
               msb: 63
-              readable: False
-              writable: False
               reserved0: True
