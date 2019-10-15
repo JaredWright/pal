@@ -1,189 +1,77 @@
 - name: ia32_feature_control
-  long_name: ia32_feature_control
-  purpose: "Control Features in Intel 64 Processor"
+  long_name: "ia32_feature_control"
+  purpose: |
+       "
+       "
   size: 64
-  
+  arch: x86_64
+
   access_mechanisms:
       - name: rdmsr
-        address: 0x3A
-  
+        is_read: True
+        address: 0x3a
+
       - name: wrmsr
-        address: 0x3A
+        is_write: True
+        address: 0x3a
 
   fieldsets:
       - name: latest
         condition: "Fieldset valid on latest version of the Intel architecture"
         size: 64
 
-        fields:
-            - name: lock_bit
-              long_name: "Lock bit"
-              lsb: 0
-              msb: 0
-              readable: True
-              writable: True
-              write_once: True
-              description: |
-                  "
-                  Lock bit (R/WO): (1 = locked). When set, locks this MSR from
-                  being written; writes to this bit will result in GP(0).
-                  Note: Once the Lock bit is set, the contents of this register
-                  cannot be modified.  Therefore the lock bit must be set after
-                  configuring support for Intel Virtualization Technology and
-                  prior to transferring control to an option ROM or the OS.
-                  Hence, once the Lock bit is set, the entire
-                  IA32_FEATURE_CONTROL contents are preserved across RESET when
-                  PWRGOOD is not deasserted.
-                  "
-              access_constraint: |
-                  "
-                  If any one enumeration condition for defined bit field
-                  position greater than bit 0 holds.
-                  "
+          - name: lock_bit
+            long_name: "lock_bit"
+            lsb: 0
+            msb: 0
+            readable: True
+            writable: True
 
-            - name: enable_vmx_inside_smx
-              long_name: "Enable VMX inside SMX operation"
-              lsb: 1
-              msb: 1
-              readable: True
-              writable: True
-              lockable: True
-              description: |
-                  "
-                  Enable VMX inside SMX operation (R/WL): This bit enables a
-                  system executive to use VMX in conjunction with SMX to
-                  support Intel® Trusted Execution Technology.  BIOS must set
-                  this bit only when the CPUID function 1 returns VMX feature
-                  flag and SMX feature flag set (ECX bits 5 and 6 respectively)
-                  "
-              access_constraint: |
-                  "
-                  CPUID.01H:ECX[5] = 1 && CPUID.01H:ECX[6] = 1
-                  "
+          - name: enable_vmx_inside_smx
+            long_name: "enable_vmx_inside_smx"
+            lsb: 1
+            msb: 1
+            readable: True
+            writable: True
 
-            - name: enable_vmx_outside_smx
-              long_name: "Enable VMX outside SMX operation"
-              lsb: 2
-              msb: 2
-              readable: True
-              writable: True
-              description: |
-                  "
-                  Enable VMX outside SMX operation (R/WL): This bit enables VMX
-                  for a system executive that does not require SMX.  BIOS must
-                  set this bit only when the CPUID function 1 returns the VMX
-                  feature flag set (ECX bit 5)
-                  "
-              access_constraint: |
-                  "
-                  If CPUID.01H:ECX[5] = 1
-                  "
+          - name: enable_vmx_outside_smx
+            long_name: "enable_vmx_outside_smx"
+            lsb: 2
+            msb: 2
+            readable: True
+            writable: True
 
-            - name: reserved
-              long_name: "Reserved"
-              lsb: 3
-              msb: 7
-              preserved: True
+          - name: senter_local_function_enable
+            long_name: "senter_local_function_enable"
+            lsb: 8
+            msb: 14
+            readable: True
+            writable: True
 
-            - name: senter_local_function_enables
-              long_name: "SENTER Local Function Enables"
-              lsb: 8
-              msb: 14 
-              readable: True
-              writable: True
-              description: |
-                  "
-                  SENTER Local Function Enables (R/WL): When set, each bit in
-                  the field represents an enable control for a corresponding
-                  SENTER function. This field is supported only if
-                  CPUID.1:ECX.[bit 6] is set.
-                  "
-              access_constraint: |
-                  "
-                  If CPUID.01H:ECX[6] = 1
-                  "
+          - name: senter_global_function_enables
+            long_name: "senter_global_function_enables"
+            lsb: 15
+            msb: 15
+            readable: True
+            writable: True
 
-            - name: senter_global_enable
-              long_name: "SENTER Global Enable"
-              lsb: 15
-              msb: 15 
-              readable: True
-              writable: True
-              description: |
-                  "
-                  SENTER Global Enable (R/WL): This bit must be set to enable
-                  SENTER leaf functions.  This bit is supported only if
-                  CPUID.1:ECX.[bit 6] is set.
-                  "
-              access_constraint: |
-                  "
-                  If CPUID.01H:ECX[6] = 1
-                  "
+          - name: sgx_launch_control_enable
+            long_name: "sgx_launch_control_enable"
+            lsb: 17
+            msb: 17
+            readable: True
+            writable: True
 
-            - name: reserved
-              long_name: "Reserved"
-              lsb: 16
-              msb: 16
-              preserved: True
+          - name: sgx_global_enable
+            long_name: "sgx_global_enable"
+            lsb: 18
+            msb: 18
+            readable: True
+            writable: True
 
-            - name: sgx_launch_control_enable
-              long_name: "SGX Launch Control Enable"
-              lsb: 17
-              msb: 17 
-              readable: True
-              writable: True
-              description: |
-                  "
-                  SGX Launch Control Enable (R/WL): This bit must be set to
-                  enable runtime reconfiguration of SGX Launch Control via the
-                  IA32_SGXLEPUBKEYHASHn MSR. 
-                  "
-              access_constraint: |
-                  "
-                  If CPUID.(EAX=07H, ECX=0H): ECX[30] = 1
-                  "
-
-            - name: sgx_global_enable
-              long_name: "SGX Global Enable"
-              lsb: 18
-              msb: 18 
-              readable: True
-              writable: True
-              description: |
-                  "
-                  SGX Global Enable (R/WL): This bit must be set to enable SGX
-                  leaf functions.
-                  "
-              access_constraint: |
-                  "
-                  If CPUID.(EAX=07H, ECX=0H): EBX[2] = 1
-                  "
-
-            - name: reserved
-              long_name: "Reserved"
-              lsb: 19
-              msb: 19
-              preserved: True
-
-            - name: lmce
-              long_name: "LMCE On"
-              lsb: 20
-              msb: 20 
-              readable: True
-              writable: True
-              description: |
-                  "
-                  LMCE On (R/WL): When set, system software can program the
-                  MSRs associated with LMCE to configure delivery of some
-                  machine check exceptions to a single logical processor.
-                  "
-              access_constraint: |
-                  "
-                  If IA32_MCG_CAP[27] = 1
-                  "
-
-            - name: reserved
-              long_name: "Reserved"
-              lsb: 21
-              msb: 63
-              preserved: True
+          - name: lmce
+            long_name: "lmce"
+            lsb: 20
+            msb: 20
+            readable: True
+            writable: True
