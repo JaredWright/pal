@@ -20,7 +20,8 @@
             ECX, and EDX registers is not defined; that is, specific bytes are
             not designated to contain descriptors for specific cache, prefetch,
             or TLB types. The descriptors may appear in any order. Note also a
-            processor may
+            processor may report a general descriptor type (FFH) and not report
+            any byte descriptor of “cache type” via CPUID leaf 2.
       "
   size: 32
   
