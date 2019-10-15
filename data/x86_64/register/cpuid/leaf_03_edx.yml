@@ -1,0 +1,9 @@
+- name: leaf_03_edx
+  long_name: "Basic CPUID Information"
+  size: 32
+  
+  access_mechanisms:
+      - name: cpuid
+        leaf: 0x3
+        subleaf: 0x0
+        output: edx
