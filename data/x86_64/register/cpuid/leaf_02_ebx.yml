@@ -28,5 +28,4 @@
   access_mechanisms:
       - name: cpuid
         leaf: 0x2
-        subleaf: 0x0
         output: ebx

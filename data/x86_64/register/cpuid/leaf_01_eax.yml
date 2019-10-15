@@ -14,7 +14,6 @@
   access_mechanisms:
       - name: cpuid
         leaf: 0x1
-        subleaf: 0x0
         output: eax
   
   fieldsets:

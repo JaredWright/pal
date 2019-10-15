@@ -30,7 +30,7 @@
   access_mechanisms:
       - name: cpuid
         leaf: 0x4
-        subleaf: 0x0
+        uses_subleaf: True
         output: edx
 
   fieldsets:

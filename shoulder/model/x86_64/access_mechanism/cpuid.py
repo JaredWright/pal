@@ -28,10 +28,10 @@ class CPUID(AbstractAccessMechanism):
     """ Access mechanism for reading information from the CPUID instruction """
 
     leaf: bytes = 0
-    """ The CPUID leaf to be read  """
+    """ The CPUID leaf to be read (eax)  """
 
-    subleaf: bytes = 0
-    """ The CPUID subleaf to be read  """
+    uses_subleaf: bool = False
+    """ True if this CPUID leaf uses/supports a subleaf (ecx) """
 
     output: str = "eax"
     """ The output register that CPUID reads information into  """
