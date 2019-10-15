@@ -1,6 +1,21 @@
 - name: leaf_01_ebx
-  long_name: "Basic CPUID Information Leaf 01 Output EBX"
-  purpose: "Basic CPUID Information"
+  long_name: "Basic CPUID Information"
+  purpose: |
+      "
+      When CPUID executes with EAX set to 01H, additional information is
+      returned to the EBX register:
+          • Brand index (low byte of EBX) — this
+            number provides an entry into a brand string table that contains
+            brand strings for IA-32 processors. More information about this
+            field is provided later in this section.
+          • CLFLUSH instruction cache line size (second byte of EBX) — this
+            number indicates the size of the cache line flushed by the CLFLUSH
+            and CLFLUSHOPT instructions in 8-byte increments. This field was
+            introduced in the Pentium 4 processor.
+          • Local APIC ID (high byte of EBX) — this number is the 8-bit ID that
+            is assigned to the local APIC on the processor during power up.
+            This field was introduced in the Pentium 4 processor
+      "
   size: 32
   
   access_mechanisms:

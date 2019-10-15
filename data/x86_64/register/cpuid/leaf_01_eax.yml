@@ -1,6 +1,14 @@
 - name: leaf_01_eax
-  long_name: "Basic CPUID Information Leaf 01 Output EAX"
-  purpose: "Version Information: Type, Family, Model, and Stepping ID"
+  long_name: "Basic CPUID Information"
+  purpose: |
+      "
+      When CPUID executes with EAX set to 01H, version information is returned
+      in EAX (see Figure 3-6). For example: model, family, and processor type
+      for the Intel Xeon processor 5100 series is as follows:
+          • Model — 1111B
+          • Family — 0101B
+          • Processor Type — 00B
+      "
   size: 32
   
   access_mechanisms:
