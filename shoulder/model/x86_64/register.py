@@ -37,33 +37,34 @@ class x86_64Register(Register):
 
     execution_states: Dict[str, bool] \
         = datafield(default_factory= lambda: {
-            "real_mode": True,
-            "protected_mode": True,
-            "64bit_mode": True,
-            "compatibility_mode": True,
-            "virtual_8086": True,
+            "real_mode": False,
+            "protected_mode": False,
+            "64bit_mode": False,
+            "compatibility_mode": False,
+            "virtual_8086": False,
         })
 
     arch_variants: Dict[str, bool] \
         = datafield(default_factory= lambda: {
-            "skylake": True,
-            "goldmont": True,
-            "kaby_lake": True,
-            "coffee_lake": True,
-            "goldmont_plus": True,
-            "cannon_lake": True,
-            "whiskey_lake": True,
-            "amber_lake": True,
-            "cascade_lake": True,
-            "comet_lake": True,
-            "ice_lake": True,
+            "skylake": False,
+            "goldmont": False,
+            "kaby_lake": False,
+            "coffee_lake": False,
+            "goldmont_plus": False,
+            "cannon_lake": False,
+            "whiskey_lake": False,
+            "amber_lake": False,
+            "cascade_lake": False,
+            "comet_lake": False,
+            "ice_lake": False,
         })
 
     access_mechanisms: Dict[str, List[AbstractAccessMechanism]] \
         = datafield(default_factory= lambda: {
+            "mov": [],
+            "cpuid": [],
             "rdmsr": [],
             "wrmsr": [],
-            "cpuid": [],
             "vmread": [],
             "vmwrite": [],
         })

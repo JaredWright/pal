@@ -34,6 +34,9 @@ class MOV(AbstractAccessMechanism):
     destination_mnemonic: str = "rax"
     """ The destination assembler mnemonic for the MOV instruction  """
 
+    name: str = "mov"
+    """ The name of this access mechanism  """
+
     def is_read(self):
         return True
 

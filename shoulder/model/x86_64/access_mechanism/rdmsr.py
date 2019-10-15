@@ -27,8 +27,11 @@ from dataclasses import dataclass
 class RDMSR(AbstractAccessMechanism):
     """ Access mechanism for reading a model specific register (MSR) """
 
-    address: bytes
+    address: int
     """ The address of the MSR to be read  """
+
+    name: str = "rdmsr"
+    """ The name of this access mechanism  """
 
     def is_read(self):
         return True

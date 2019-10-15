@@ -37,6 +37,9 @@ class CPUID(AbstractAccessMechanism):
     """ The output register that CPUID reads information into  """
     """ Options: eax, ebx, ecx, edx  """
 
+    name: str = "cpuid"
+    """ The name of this access mechanism  """
+
     def is_read(self):
         return True
 
