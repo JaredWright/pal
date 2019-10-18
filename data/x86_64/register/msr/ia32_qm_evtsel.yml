@@ -20,16 +20,17 @@
         condition: "Fieldset valid on latest version of the Intel architecture"
         size: 64
 
-          - name: event_id
-            long_name: "event_id"
-            lsb: 0
-            msb: 7
-            readable: True
-            writable: True
+        fields:
+            - name: event_id
+              long_name: "event_id"
+              lsb: 0
+              msb: 7
+              readable: True
+              writable: True
 
-          - name: resource_monitoring_id
-            long_name: "resource_monitoring_id"
-            lsb: 32
-            msb: 63
-            readable: True
-            writable: True
+            - name: resource_monitoring_id
+              long_name: "resource_monitoring_id"
+              lsb: 32
+              msb: 63
+              readable: True
+              writable: True

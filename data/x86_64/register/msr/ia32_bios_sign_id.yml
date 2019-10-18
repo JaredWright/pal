@@ -16,8 +16,9 @@
         condition: "Fieldset valid on latest version of the Intel architecture"
         size: 64
 
-          - name: bios_sign_id
-            long_name: "bios_sign_id"
-            lsb: 32
-            msb: 63
-            readable: True
+        fields:
+            - name: bios_sign_id
+              long_name: "bios_sign_id"
+              lsb: 32
+              msb: 63
+              readable: True

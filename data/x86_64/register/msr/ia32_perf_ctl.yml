@@ -20,16 +20,17 @@
         condition: "Fieldset valid on latest version of the Intel architecture"
         size: 64
 
-          - name: state_value
-            long_name: "state_value"
-            lsb: 0
-            msb: 15
-            readable: True
-            writable: True
+        fields:
+            - name: state_value
+              long_name: "state_value"
+              lsb: 0
+              msb: 15
+              readable: True
+              writable: True
 
-          - name: ida_engage
-            long_name: "ida_engage"
-            lsb: 32
-            msb: 32
-            readable: True
-            writable: True
+            - name: ida_engage
+              long_name: "ida_engage"
+              lsb: 32
+              msb: 32
+              readable: True
+              writable: True

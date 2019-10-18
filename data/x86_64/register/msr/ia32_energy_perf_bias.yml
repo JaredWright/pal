@@ -20,9 +20,10 @@
         condition: "Fieldset valid on latest version of the Intel architecture"
         size: 64
 
-          - name: power_policy
-            long_name: "power_policy"
-            lsb: 0
-            msb: 3
-            readable: True
-            writable: True
+        fields:
+            - name: power_policy
+              long_name: "power_policy"
+              lsb: 0
+              msb: 3
+              readable: True
+              writable: True

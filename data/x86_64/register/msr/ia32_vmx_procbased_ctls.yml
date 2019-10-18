@@ -16,14 +16,15 @@
         condition: "Fieldset valid on latest version of the Intel architecture"
         size: 64
 
-          - name: allowed_0_settings
-            long_name: "allowed_0_settings"
-            lsb: 0
-            msb: 31
-            readable: True
+        fields:
+            - name: allowed_0_settings
+              long_name: "allowed_0_settings"
+              lsb: 0
+              msb: 31
+              readable: True
 
-          - name: allowed_1_settings
-            long_name: "allowed_1_settings"
-            lsb: 32
-            msb: 63
-            readable: True
+            - name: allowed_1_settings
+              long_name: "allowed_1_settings"
+              lsb: 32
+              msb: 63
+              readable: True

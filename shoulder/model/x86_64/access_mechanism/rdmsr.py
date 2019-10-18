@@ -27,7 +27,7 @@ from dataclasses import dataclass
 class RDMSR(AbstractAccessMechanism):
     """ Access mechanism for reading a model specific register (MSR) """
 
-    address: int
+    address: int = 0
     """ The address of the MSR to be read  """
 
     name: str = "rdmsr"

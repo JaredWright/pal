@@ -27,7 +27,7 @@ from dataclasses import dataclass
 class WRMSR(AbstractAccessMechanism):
     """ Access mechanism for writing a model specific register (MSR) """
 
-    address: int
+    address: int = 0
     """ The address of the MSR to be written  """
 
     name: str = "wrmsr"

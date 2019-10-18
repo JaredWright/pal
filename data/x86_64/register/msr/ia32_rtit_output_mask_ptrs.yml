@@ -20,16 +20,17 @@
         condition: "Fieldset valid on latest version of the Intel architecture"
         size: 64
 
-          - name: mask_table_offset
-            long_name: "mask_table_offset"
-            lsb: 7
-            msb: 31
-            readable: True
-            writable: True
+        fields:
+            - name: mask_table_offset
+              long_name: "mask_table_offset"
+              lsb: 7
+              msb: 31
+              readable: True
+              writable: True
 
-          - name: output_offset
-            long_name: "output_offset"
-            lsb: 32
-            msb: 63
-            readable: True
-            writable: True
+            - name: output_offset
+              long_name: "output_offset"
+              lsb: 32
+              msb: 63
+              readable: True
+              writable: True

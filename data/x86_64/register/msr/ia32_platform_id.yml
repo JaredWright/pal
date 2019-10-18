@@ -16,8 +16,9 @@
         condition: "Fieldset valid on latest version of the Intel architecture"
         size: 64
 
-          - name: platform_id
-            long_name: "platform_id"
-            lsb: 50
-            msb: 52
-            readable: True
+        fields:
+            - name: platform_id
+              long_name: "platform_id"
+              lsb: 50
+              msb: 52
+              readable: True

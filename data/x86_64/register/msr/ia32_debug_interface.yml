@@ -20,23 +20,24 @@
         condition: "Fieldset valid on latest version of the Intel architecture"
         size: 64
 
-          - name: enable
-            long_name: "enable"
-            lsb: 0
-            msb: 0
-            readable: True
-            writable: True
+        fields:
+            - name: enable
+              long_name: "enable"
+              lsb: 0
+              msb: 0
+              readable: True
+              writable: True
 
-          - name: lock
-            long_name: "lock"
-            lsb: 30
-            msb: 30
-            readable: True
-            writable: True
+            - name: lock
+              long_name: "lock"
+              lsb: 30
+              msb: 30
+              readable: True
+              writable: True
 
-          - name: debug_occurred
-            long_name: "debug_occurred"
-            lsb: 31
-            msb: 31
-            readable: True
-            writable: True
+            - name: debug_occurred
+              long_name: "debug_occurred"
+              lsb: 31
+              msb: 31
+              readable: True
+              writable: True

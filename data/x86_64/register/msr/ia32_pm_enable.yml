@@ -20,9 +20,10 @@
         condition: "Fieldset valid on latest version of the Intel architecture"
         size: 64
 
-          - name: hwp
-            long_name: "sce"
-            lsb: 0
-            msb: 0
-            readable: True
-            writable: True
+        fields:
+            - name: hwp
+              long_name: "sce"
+              lsb: 0
+              msb: 0
+              readable: True
+              writable: True

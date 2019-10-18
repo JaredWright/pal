@@ -16,8 +16,9 @@
         condition: "Fieldset valid on latest version of the Intel architecture"
         size: 64
 
-          - name: eptp_switching
-            long_name: "eptp_switching"
-            lsb: 0
-            msb: 0
-            readable: True
+        fields:
+            - name: eptp_switching
+              long_name: "eptp_switching"
+              lsb: 0
+              msb: 0
+              readable: True

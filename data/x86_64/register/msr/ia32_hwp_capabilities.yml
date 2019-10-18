@@ -16,26 +16,27 @@
         condition: "Fieldset valid on latest version of the Intel architecture"
         size: 64
 
-          - name: highest_perf
-            long_name: "highest_perf"
-            lsb: 0
-            msb: 7
-            readable: True
+        fields:
+            - name: highest_perf
+              long_name: "highest_perf"
+              lsb: 0
+              msb: 7
+              readable: True
 
-          - name: guaranteed_perf
-            long_name: "guaranteed_perf"
-            lsb: 8
-            msb: 15
-            readable: True
+            - name: guaranteed_perf
+              long_name: "guaranteed_perf"
+              lsb: 8
+              msb: 15
+              readable: True
 
-          - name: most_efficient_perf
-            long_name: "most_efficient_perf"
-            lsb: 16
-            msb: 23
-            readable: True
+            - name: most_efficient_perf
+              long_name: "most_efficient_perf"
+              lsb: 16
+              msb: 23
+              readable: True
 
-          - name: lowest_perf
-            long_name: "lowest_perf"
-            lsb: 24
-            msb: 31
-            readable: True
+            - name: lowest_perf
+              long_name: "lowest_perf"
+              lsb: 24
+              msb: 31
+              readable: True

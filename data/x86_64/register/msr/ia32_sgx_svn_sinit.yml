@@ -16,14 +16,15 @@
         condition: "Fieldset valid on latest version of the Intel architecture"
         size: 64
 
-          - name: lock
-            long_name: "lock"
-            lsb: 0
-            msb: 0
-            readable: True
+        fields:
+            - name: lock
+              long_name: "lock"
+              lsb: 0
+              msb: 0
+              readable: True
 
-          - name: sgx_svn_sinit
-            long_name: "sgx_svn_sinit"
-            lsb: 16
-            msb: 23
-            readable: True
+            - name: sgx_svn_sinit
+              long_name: "sgx_svn_sinit"
+              lsb: 16
+              msb: 23
+              readable: True

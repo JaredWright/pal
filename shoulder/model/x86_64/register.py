@@ -61,7 +61,8 @@ class x86_64Register(Register):
 
     access_mechanisms: Dict[str, List[AbstractAccessMechanism]] \
         = datafield(default_factory= lambda: {
-            "mov": [],
+            "mov_read": [],
+            "mov_write": [],
             "cpuid": [],
             "rdmsr": [],
             "wrmsr": [],

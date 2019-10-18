@@ -26,11 +26,11 @@
       Software Developer’s Manual, Volume 3A.
       "
   size: 32
+  is_indexed: True
   
   access_mechanisms:
       - name: cpuid
         leaf: 0x4
-        uses_subleaf: True
         output: edx
 
   fieldsets:

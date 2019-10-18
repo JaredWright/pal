@@ -16,8 +16,9 @@
         condition: "Fieldset valid on latest version of the Intel architecture"
         size: 64
 
-          - name: max_nonturbo_ratio
-            long_name: "max_non_turbo_ratio"
-            lsb: 8
-            msb: 15
-            readable: True
+        fields:
+            - name: max_nonturbo_ratio
+              long_name: "max_non_turbo_ratio"
+              lsb: 8
+              msb: 15
+              readable: True

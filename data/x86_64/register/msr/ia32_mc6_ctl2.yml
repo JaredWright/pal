@@ -20,6 +20,7 @@
         condition: "Fieldset valid on latest version of the Intel architecture"
         size: 64
 
+        fields:
           - name: error_threshold
             long_name: "error_threshold"
             lsb: 0

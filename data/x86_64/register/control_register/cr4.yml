@@ -9,10 +9,10 @@
   size: 64
   
   access_mechanisms:
-      - name: mov
+      - name: mov_read
         source_mnemonic: cr4
 
-      - name: mov
+      - name: mov_write
         destination_mnemonic: cr4
 
   fieldsets:

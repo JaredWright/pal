@@ -20,23 +20,24 @@
         condition: "Fieldset valid on latest version of the Intel architecture"
         size: 64
 
-          - name: ext_duty_cycle
-            long_name: "ext_duty_cycle"
-            lsb: 0
-            msb: 0
-            readable: True
-            writable: True
+        fields:
+            - name: ext_duty_cycle
+              long_name: "ext_duty_cycle"
+              lsb: 0
+              msb: 0
+              readable: True
+              writable: True
 
-          - name: duty_cycle_values
-            long_name: "duty_cycle_values"
-            lsb: 1
-            msb: 3
-            readable: True
-            writable: True
+            - name: duty_cycle_values
+              long_name: "duty_cycle_values"
+              lsb: 1
+              msb: 3
+              readable: True
+              writable: True
 
-          - name: enable_modulation
-            long_name: "enable_modulation"
-            lsb: 4
-            msb: 4
-            readable: True
-            writable: True
+            - name: enable_modulation
+              long_name: "enable_modulation"
+              lsb: 4
+              msb: 4
+              readable: True
+              writable: True

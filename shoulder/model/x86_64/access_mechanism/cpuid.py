@@ -30,9 +30,6 @@ class CPUID(AbstractAccessMechanism):
     leaf: bytes = 0
     """ The CPUID leaf to be read (eax)  """
 
-    uses_subleaf: bool = False
-    """ True if this CPUID leaf uses/supports a subleaf (ecx) """
-
     output: str = "eax"
     """ The output register that CPUID reads information into  """
     """ Options: eax, ebx, ecx, edx  """

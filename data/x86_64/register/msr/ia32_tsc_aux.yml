@@ -20,8 +20,9 @@
         condition: "Fieldset valid on latest version of the Intel architecture"
         size: 64
 
-          - name: aux
-            lsb:  0
-            msb: 31
-            readable: True
-            writable: True
+        fields:
+            - name: aux
+              lsb:  0
+              msb: 31
+              readable: True
+              writable: True

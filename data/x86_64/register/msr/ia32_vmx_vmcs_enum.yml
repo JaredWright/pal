@@ -16,8 +16,9 @@
         condition: "Fieldset valid on latest version of the Intel architecture"
         size: 64
 
-          - name: highest_index
-            long_name: "highest_index"
-            lsb: 1
-            msb: 9
-            readable: True
+        fields:
+            - name: highest_index
+              long_name: "highest_index"
+              lsb: 1
+              msb: 9
+              readable: True

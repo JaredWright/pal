@@ -53,6 +53,9 @@ class Register():
     is_optional: bool = False
     """ True if this register is an optional feature of the architecture """
 
+    is_indexed: bool = False
+    """ True if the register has many instances, accessable via an index """
+
     access_mechanisms: Dict[str, List[AbstractAccessMechanism]] \
         = datafield(default_factory= lambda: {})
     """ Access mechanisms by which this register is readable/writable """

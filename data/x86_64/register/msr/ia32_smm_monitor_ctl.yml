@@ -20,23 +20,24 @@
         condition: "Fieldset valid on latest version of the Intel architecture"
         size: 64
 
-          - name: valid
-            long_name: "valid"
-            lsb: 0
-            msb: 0
-            readable: True
-            writable: True
+        fields:
+            - name: valid
+              long_name: "valid"
+              lsb: 0
+              msb: 0
+              readable: True
+              writable: True
 
-          - name: vmxoff
-            long_name: "vmxoff"
-            lsb: 2
-            msb: 2
-            readable: True
-            writable: True
+            - name: vmxoff
+              long_name: "vmxoff"
+              lsb: 2
+              msb: 2
+              readable: True
+              writable: True
 
-          - name: mseg_base
-            long_name: "mseg_base"
-            lsb: 12
-            msb: 31
-            readable: True
-            writable: True
+            - name: mseg_base
+              long_name: "mseg_base"
+              lsb: 12
+              msb: 31
+              readable: True
+              writable: True

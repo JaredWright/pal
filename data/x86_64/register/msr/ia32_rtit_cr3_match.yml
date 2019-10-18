@@ -20,9 +20,10 @@
         condition: "Fieldset valid on latest version of the Intel architecture"
         size: 64
 
-          - name: cr3
-            long_name: "cr3"
-            lsb: 5
-            msb: 63
-            readable: True
-            writable: True
+        fields:
+            - name: cr3
+              long_name: "cr3"
+              lsb: 5
+              msb: 63
+              readable: True
+              writable: True

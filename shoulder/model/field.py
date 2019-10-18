@@ -27,17 +27,20 @@ from dataclasses import dataclass
 class Field():
     """ Models a single named field (or bitfield) in a register fieldset """
 
-    name: str
+    name: str = ""
     """ The abbreviated/symbolic/accronym name for this field """
 
-    msb: int
+    msb: int = 0
     """ Most significant bit that the field occupies within a register """
 
-    lsb: int
+    lsb: int = 0
     """ Least significant bit that the field occupies within a register """
 
     long_name: str = ""
     """ The non-abbreviated/spelled out name for this field """
+
+    description: str = ""
+    """ A description of this field """
 
     readable: bool = False
     """ True if this field is readable  """

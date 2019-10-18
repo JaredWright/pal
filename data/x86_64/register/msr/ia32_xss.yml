@@ -20,9 +20,10 @@
         condition: "Fieldset valid on latest version of the Intel architecture"
         size: 64
 
-          - name: trace_packet
-            long_name: "trace_packet"
-            lsb: 8
-            msb: 8
-            readable: True
-            writable: True
+        fields:
+            - name: trace_packet
+              long_name: "trace_packet"
+              lsb: 8
+              msb: 8
+              readable: True
+              writable: True
