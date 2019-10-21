@@ -85,7 +85,7 @@ class CxxHeaderGenerator(AbstractGenerator):
     @shoulder.gadget.license
     @shoulder.gadget.include_guard
     @shoulder.gadget.header_depends
-    @shoulder.gadget.external_component
+    #  @shoulder.gadget.external_component
     def _generate(self, outfile, regs):
         self.gadgets["shoulder.cxx.namespace"].name = "pal"
         #  aarch64_regs = filters["aarch64"].filter_inclusive(regs)
@@ -220,12 +220,12 @@ class CxxHeaderGenerator(AbstractGenerator):
         gadget = self.gadgets["shoulder.cxx.function_definition"]
         gadget.name = config.register_read_function
         gadget.return_type = self._register_size_type(reg)
+        gadget.args = []
+
         if reg.is_indexed:
-            arg_size_type = self._register_size_type(reg)
-            arg_name = "index"
-            gadget.args = [(arg_size_type, arg_name)]
-        else:
-            gadget.args = []
+            gadget.args = [("uint32_t", "index")]
+            gadget.name = gadget.name + "_at_index"
+
         self._generate_register_get_body(outfile, reg)
 
     @shoulder.gadget.cxx.function_definition
@@ -337,6 +337,10 @@ class CxxHeaderGenerator(AbstractGenerator):
                 name=config.bit_set_function
             )
 
+            if reg.is_indexed:
+                gadget.args.append(("uint32_t", "index"))
+                gadget.name = gadget.name + "_at_index"
+
             self._bitfield_set(outfile, reg, field)
 
     @shoulder.gadget.cxx.function_definition
@@ -386,7 +390,6 @@ class CxxHeaderGenerator(AbstractGenerator):
         Generate a C++ function that checks if the given bitfield is set (1) in
         the given register
         """
-
         if reg.is_readable():
             size_type = self._register_size_type(reg)
 
@@ -396,6 +399,10 @@ class CxxHeaderGenerator(AbstractGenerator):
             gadget.name = "{name}".format(
                 name=config.is_bit_set_function
             )
+
+            if reg.is_indexed:
+                gadget.args.append(("uint32_t", "index"))
+                gadget.name = gadget.name + "_at_index"
 
             self._bitfield_is_set(outfile, reg, field)
 
@@ -456,6 +463,10 @@ class CxxHeaderGenerator(AbstractGenerator):
                 name=config.bit_clear_function
             )
 
+            if reg.is_indexed:
+                gadget.args.append(("uint32_t", "index"))
+                gadget.name = gadget.name + "_at_index"
+
             self._bitfield_clear(outfile, reg, field)
 
     @shoulder.gadget.cxx.function_definition
@@ -514,6 +525,10 @@ class CxxHeaderGenerator(AbstractGenerator):
             gadget.name = "{name}".format(
                 name=config.is_bit_cleared_function
             )
+
+            if reg.is_indexed:
+                gadget.args.append(("uint32_t", "index"))
+                gadget.name = gadget.name + "_at_index"
 
             self._bitfield_is_clear(outfile, reg, field)
 
@@ -578,6 +593,10 @@ class CxxHeaderGenerator(AbstractGenerator):
                 name=config.register_field_read_function
             )
 
+            if reg.is_indexed:
+                gadget.args.append(("uint32_t", "index"))
+                gadget.name = gadget.name + "_at_index"
+
             self._field_get(outfile, reg, field)
 
     @shoulder.gadget.cxx.function_definition
@@ -639,6 +658,10 @@ class CxxHeaderGenerator(AbstractGenerator):
             gadget.name = "{name}".format(
                 name=config.register_field_write_function
             )
+
+            if reg.is_indexed:
+                gadget.args.append(("uint32_t", "index"))
+                gadget.name = gadget.name + "_at_index"
 
             self._field_set(outfile, reg, field)
 

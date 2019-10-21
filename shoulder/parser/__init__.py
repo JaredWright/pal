@@ -26,6 +26,8 @@ import glob
 from shoulder.logger import logger
 from shoulder.exception import ShoulderParserException
 from shoulder.parser.armv8_xml_parser import ArmV8XmlParser
+from shoulder.parser.bfmsr_parser import BfMsrParser
+from shoulder.parser.shoulder_model_parser import ShoulderModelParser
 
 # -----------------------------------------------------------------------------
 # Module interface
@@ -45,9 +47,12 @@ def parse_registers(spec_path):
 
     logger.info("Parsing registers from: " + str(spec_path))
 
-    paths = glob.glob(spec_path + "/*.xml")
+    #  paths = glob.glob(spec_path + "/*.xml")
+    paths = glob.glob(spec_path + "/*.yml")
     regs = []
-    parser = ArmV8XmlParser()
+    #  parser = ArmV8XmlParser()
+    #  parser = ArmV8XmlParser()
+    parser = ShoulderModelParser()
 
     for path in paths:
         results = parser.parse_file(path)

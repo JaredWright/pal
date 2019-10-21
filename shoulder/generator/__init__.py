@@ -27,6 +27,9 @@ import copy
 from shoulder.logger import logger
 from shoulder.config import config
 import shutil
+from .yaml_data_generator import YamlDataGenerator
+from .msr_data_generator import MsrDataGenerator
+from .cxx_header_generator import CxxHeaderGenerator
 
 pkg_dir = os.path.dirname(__file__)
 for (module_loader, name, ispkg) in pkgutil.iter_modules([pkg_dir]):
@@ -41,21 +44,35 @@ for (module_loader, name, ispkg) in pkgutil.iter_modules([pkg_dir]):
 # from shoulder.generator import *
 # generate_all()
 
+
 def generate_all(regs, outdir):
     logger.info("Generating outputs to: " + str(outdir))
 
-    all_generators = [cls for cls in abstract_generator.AbstractGenerator.__subclasses__()]
+    #  all_generators = [cls for cls in abstract_generator.AbstractGenerator.__subclasses__()]
 
-    for generator_class in all_generators:
-        sub_outdir = os.path.abspath(os.path.join(outdir, generator_class.__name__))
+    #  for generator_class in all_generators:
+    #      sub_outdir = os.path.abspath(os.path.join(outdir, generator_class.__name__))
+    #
+    #      if os.path.exists(sub_outdir):
+    #          shutil.rmtree(sub_outdir)
+    #
+    #      if os.path.exists(config.shoulder_include_dir):
+    #          shutil.copytree(config.shoulder_include_dir, sub_outdir)
+    #
+    #      g = generator_class()
+    #      g.generate(copy.deepcopy(regs), sub_outdir)
 
-        if os.path.exists(sub_outdir):
-            shutil.rmtree(sub_outdir)
+    if os.path.exists(outdir):
+        shutil.rmtree(outdir)
 
-        if os.path.exists(config.shoulder_include_dir):
-            shutil.copytree(config.shoulder_include_dir, sub_outdir)
+    os.makedirs(outdir)
 
-        g = generator_class()
-        g.generate(copy.deepcopy(regs), sub_outdir)
+    #  if os.path.exists(config.shoulder_include_dir):
+    #      shutil.copytree(config.shoulder_include_dir, outdir)
+
+    #  g = YamlDataGenerator()
+    #  g = MsrDataGenerator()
+    g = CxxHeaderGenerator()
+    g.generate(copy.deepcopy(regs), outdir)
 
     logger.info("Generation complete")

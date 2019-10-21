@@ -21,6 +21,7 @@
 # SOFTWARE.
 
 import sys
+import os
 
 from shoulder.cmd_args import parse_cmd_args
 from shoulder.parser import parse_registers
@@ -29,8 +30,29 @@ from shoulder.generator import generate_all
 
 def shoulder_main():
     config = parse_cmd_args(sys.argv[1:])
-    regs = parse_registers(config.xml_register_dir)
-    generate_all(regs, config.shoulder_output_dir)
 
+    path = "/home/wrightj/pal_workspace/shoulder/data/x86_64/register/control_register"
+    regs = parse_registers(path)
+    generate_all(regs, os.path.join(config.shoulder_output_dir, "control_register"))
+
+    path = "/home/wrightj/pal_workspace/shoulder/data/x86_64/register/cpuid"
+    regs = parse_registers(path)
+    generate_all(regs, os.path.join(config.shoulder_output_dir, "cpuid"))
+
+    path = "/home/wrightj/pal_workspace/shoulder/data/x86_64/register/msr"
+    regs = parse_registers(path)
+    generate_all(regs, os.path.join(config.shoulder_output_dir, "msr"))
+
+    #  path = "/home/wrightj/pal_workspace/shoulder/data/armv8-a/register/aarch64"
+    #  regs = parse_registers(path)
+    #  generate_all(regs, os.path.join(config.shoulder_output_dir, "aarch64"))
+
+    #  path = "/home/wrightj/pal_workspace/shoulder/data/armv8-a/register/aarch32"
+    #  regs = parse_registers(path)
+    #  generate_all(regs, os.path.join(config.shoulder_output_dir, "aarch32"))
+
+    #  path = "/home/wrightj/pal_workspace/shoulder/data/armv8-a/register/external"
+    #  regs = parse_registers(path)
+    #  generate_all(regs, os.path.join(config.shoulder_output_dir, "external"))
 
 shoulder_main()

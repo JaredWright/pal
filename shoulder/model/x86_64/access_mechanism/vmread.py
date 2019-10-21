@@ -24,25 +24,25 @@ from shoulder.model.access_mechanism import AbstractAccessMechanism
 from dataclasses import dataclass
 
 @dataclass()
-class MOV(AbstractAccessMechanism):
-    """ Access mechanism for the x86 MOV instruction """
+class VMRead(AbstractAccessMechanism):
+    """
+    Access mechanism reading a value from a VMCS using the x86 vmread
+    instruction
+    """
 
-    # TODO: Default this to "rcx" if using Microsoft x64 calling convention
-    source_mnemonic: str = "rdi"
-    """ The source assembler mnemonic for the MOV instruction  """
+    address: int = 0
+    """ The address of the VMCS field to be read """
 
-    destination_mnemonic: str = "rax"
-    """ The destination assembler mnemonic for the MOV instruction  """
-
-    name: str = "mov"
+    name: str = "vmread"
     """ The name of this access mechanism  """
 
     def is_read(self):
         return True
 
     def is_write(self):
-        return True
+        return False
 
     def is_valid(self):
-        # TODO: Check assembler mnemonic pair is valid
+        # TODO
         return True
+

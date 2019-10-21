@@ -12,9 +12,9 @@ def call_readable_access_mechanism(outfile: TextIO, reg: Register,
         am: AbstractAccessMechanism, indent: int=0):
     write_indent(outfile, indent)
 
-    if am.name == "mov_read":
-        _call_mov_read_access_mechanism(outfile, reg, am)
-    elif am.name == "cpuid":
+    #  if am.name == "mov_read":
+    #      _call_mov_read_access_mechanism(outfile, reg, am)
+    if am.name == "cpuid":
         _call_cpuid_access_mechanism(outfile, reg, am)
     elif am.name == "rdmsr":
         _call_rdmsr_access_mechanism(outfile, reg, am)
