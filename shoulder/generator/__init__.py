@@ -27,13 +27,16 @@ import copy
 from shoulder.logger import logger
 from shoulder.config import config
 import shutil
-from .yaml_data_generator import YamlDataGenerator
-from .msr_data_generator import MsrDataGenerator
-from .cxx_header_generator import CxxHeaderGenerator
+#  from .yaml_data_generator import YamlDataGenerator
+#  from .msr_data_generator import MsrDataGenerator
+#  from .cxx_header_generator import CxxHeaderGenerator
+from .cxx.base_generator import CxxBaseGenerator
+#  from .cxx.x86_64_gcc import Intelx64GccGenerator
+#  from .cxx.unit_test import UnitTestGenerator
 
-pkg_dir = os.path.dirname(__file__)
-for (module_loader, name, ispkg) in pkgutil.iter_modules([pkg_dir]):
-    pkgutil.importlib.import_module('.' + name, __package__)
+#  pkg_dir = os.path.dirname(__file__)
+#  for (module_loader, name, ispkg) in pkgutil.iter_modules([pkg_dir]):
+#      pkgutil.importlib.import_module('.' + name, __package__)
 
 # -----------------------------------------------------------------------------
 # Module interface
@@ -72,7 +75,10 @@ def generate_all(regs, outdir):
 
     #  g = YamlDataGenerator()
     #  g = MsrDataGenerator()
-    g = CxxHeaderGenerator()
+    #  g = CxxHeaderGenerator()
+    g = CxxBaseGenerator()
+    #  g = Intelx64GccGenerator()
+    #  g = UnitTestGenerator()
     g.generate(copy.deepcopy(regs), outdir)
 
     logger.info("Generation complete")

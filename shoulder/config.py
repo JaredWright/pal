@@ -179,6 +179,10 @@ c = Configuration("is_bit_cleared_function", "is_disabled")
 c.description = "Name of generated functions for checking if a bit is set to 0"
 config.add_configuration(c)
 
+c = Configuration("print_function", "dump")
+c.description = "Name of generated functions for printing information"
+config.add_configuration(c)
+
 # -----------------------------------------------------------------------------
 # C++ options
 # -----------------------------------------------------------------------------
