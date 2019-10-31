@@ -8,7 +8,7 @@ class Cxx11UnitTestLanguageWriter(Cxx11LanguageWriter):
         self._declare_string_constant(outfile, "name", register.name.lower())
         self.write_newline(outfile)
 
-        if register.long_name and register.long_name.lower() != register.name.lower():
+        if register.long_name:
             self._declare_string_constant(outfile, "long_name", register.long_name)
             self.write_newline(outfile)
 

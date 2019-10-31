@@ -1,4 +1,3 @@
-import textwrap
 import shoulder.gadget
 from shoulder.config import config
 from shoulder.writer.printer.printer import PrinterWriter
@@ -36,7 +35,10 @@ class PrintfUtf8PrinterWriter(PrinterWriter):
         outfile.write(config.print_function + "(register_value);")
 
     def _declare_fieldset_printer_from_value(self, outfile, register, fieldset):
-        size_type = self._register_size_type(register)
+        if register.size == 32:
+            size_type = "uint32_t"
+        else:
+            size_type = "uint64_t"
         gadget = self.gadgets["shoulder.cxx.function_definition"]
         gadget.name = config.print_function
         gadget.return_type = "void"
@@ -46,9 +48,20 @@ class PrintfUtf8PrinterWriter(PrinterWriter):
 
     @shoulder.gadget.cxx.function_definition
     def _declare_fieldset_printer_from_value_details(self, outfile, register, fieldset):
-        outfile.write('printf("0x%016x %s (%s)\\n", ')
-        outfile.write('value, name, long_name);')
+        if register.size == 32:
+            outfile.write('printf("0x%016x %s", ')
+        else:
+            outfile.write('printf("0x%016lx %s", ')
+        outfile.write('value, name);')
         self.write_newline(outfile)
+
+        if register.long_name:
+            outfile.write('printf(" (%s)", long_name);')
+            self.write_newline(outfile)
+
+        outfile.write('printf("\\n");')
+        self.write_newline(outfile)
+
         for field in fieldset.fields:
             outfile.write(field.name.lower() + "::" + config.print_function + "(value);")
             self.write_newline(outfile)
@@ -73,7 +86,10 @@ class PrintfUtf8PrinterWriter(PrinterWriter):
         outfile.write(config.print_function + "(field_value);")
 
     def _declare_field_printer_from_value(self, outfile, register, field):
-        size_type = self._register_size_type(register)
+        if register.size == 32:
+            size_type = "uint32_t"
+        else:
+            size_type = "uint64_t"
         gadget = self.gadgets["shoulder.cxx.function_definition"]
         gadget.name = config.print_function
         gadget.return_type = "void"
@@ -95,7 +111,10 @@ class PrintfUtf8PrinterWriter(PrinterWriter):
             outfile.write('name')
             outfile.write(');')
         else:
-            outfile.write('printf("    [%02u:%02u] 0x%016x %-20s", ')
+            if register.size == 32:
+                outfile.write('printf("    [%02u:%02u] 0x%016x %-20s", ')
+            else:
+                outfile.write('printf("    [%02u:%02u] 0x%016lx %-20s", ')
             outfile.write('lsb, msb, field_value, name);')
 
         self.write_newline(outfile)

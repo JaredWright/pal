@@ -5,37 +5,50 @@ from shoulder.logger import logger
 
 class GasX86_64IntelSyntaxAccessMechanismWriter(AccessMechanismWriter):
 
-    def call_readable_access_mechanism(self, outfile, reg, am, result):
-        if am.name == "mov_read":
-            self._call_mov_read_access_mechanism(outfile, reg, am, result)
-        elif am.name == "cpuid":
-            self._call_cpuid_access_mechanism(outfile, reg, am, result)
-        elif am.name == "rdmsr":
-            self._call_rdmsr_access_mechanism(outfile, reg, am, result)
+    def call_readable_access_mechanism(self, outfile, register,
+                                       access_mechanism, result):
+        if access_mechanism.name == "mov_read":
+            self._call_mov_read_access_mechanism(outfile, register,
+                                                 access_mechanism, result)
+        elif access_mechanism.name == "cpuid":
+            self._call_cpuid_access_mechanism(outfile, register,
+                                              access_mechanism, result)
+        elif access_mechanism.name == "rdmsr":
+            self._call_rdmsr_access_mechanism(outfile, register,
+                                              access_mechanism, result)
         else:
-            msg = "Access mechnism {am} is not supported"
-            msg = msg.format(am=am.name)
+            msg = "Access mechnism {am} is not supported using "
+            msg += "Intel x86_64 gas intel assembler syntax".format(
+                am=access_mechanism.name
+            )
             logger.warn(msg)
 
-    def call_writable_access_mechanism(self, outfile, reg, am, value):
-        if am.name == "mov_write":
-            self._call_mov_write_access_mechanism(outfile, reg, am, value)
-        elif am.name == "wrmsr":
-            self._call_wrmsr_access_mechanism(outfile, reg, am, value)
+    def call_writable_access_mechanism(self, outfile, register,
+                                       access_mechanism, value):
+        if access_mechanism.name == "mov_write":
+            self._call_mov_write_access_mechanism(outfile, register,
+                                                  access_mechanism, value)
+        elif access_mechanism.name == "wrmsr":
+            self._call_wrmsr_access_mechanism(outfile, register,
+                                              access_mechanism, value)
         else:
-            msg = "Access mechnism {am} is not supported"
-            msg = msg.format(am=am.name)
+            msg = "Access mechnism {am} is not supported using "
+            msg += "Intel x86_64 gas intel assembler syntax".format(
+                am=access_mechanism.name
+            )
             logger.warn(msg)
 
-    def _call_mov_read_access_mechanism(self, outfile, reg, am, result):
+    def _call_mov_read_access_mechanism(self, outfile, register,
+                                        access_mechanism, result):
         self._write_inline_assembly(outfile, [
-                "mov %[v], " + am.source_mnemonic
+                "mov %[v], " + access_mechanism.source_mnemonic
             ],
             outputs='[v] "=r"(' + str(result) + ')'
         )
 
-    def _call_cpuid_access_mechanism(self, outfile, reg, am, result):
-        if reg.is_indexed:
+    def _call_cpuid_access_mechanism(self, outfile, register, access_mechanism,
+                                     result):
+        if register.is_indexed:
             subleaf_mnemonic = "%[subleaf]"
             subleaf_input = '[subleaf] "r"(index)'
         else:
@@ -43,19 +56,20 @@ class GasX86_64IntelSyntaxAccessMechanismWriter(AccessMechanismWriter):
             subleaf_input = ""
 
         self._write_inline_assembly(outfile, [
-                "mov eax, " + str(hex(am.leaf)),
+                "mov eax, " + str(hex(access_mechanism.leaf)),
                 "mov ecx, " + subleaf_mnemonic,
                 "cpuid",
-                "mov %[out], " + am.output
+                "mov %[out], " + access_mechanism.output
             ],
             outputs='[out] "=r"(' + result + ')',
             inputs=subleaf_input,
             clobbers='"eax", "ebx", "ecx", "edx"'
         )
 
-    def _call_rdmsr_access_mechanism(self, outfile, reg, am, result):
+    def _call_rdmsr_access_mechanism(self, outfile, register, access_mechanism,
+                                     result):
         self._write_inline_assembly(outfile, [
-                "mov rcx, " + str(hex(am.address)),
+                "mov rcx, " + str(hex(access_mechanism.address)),
                 "rdmsr",
                 "shl rdx, 32",
                 "or rax, rdx",
@@ -65,16 +79,18 @@ class GasX86_64IntelSyntaxAccessMechanismWriter(AccessMechanismWriter):
             clobbers='"rax", "rcx", "rdx"'
         )
 
-    def _call_mov_write_access_mechanism(self, outfile, reg, am, value):
+    def _call_mov_write_access_mechanism(self, outfile, register,
+                                         access_mechanism, value):
         self._write_inline_assembly(outfile, [
-                "mov " + am.destination_mnemonic + ", %[v]",
+                "mov " + access_mechanism.destination_mnemonic + ", %[v]",
             ],
             inputs='[v] "r"(' + value + ')'
         )
 
-    def _call_wrmsr_access_mechanism(self, outfile, reg, am, value):
+    def _call_wrmsr_access_mechanism(self, outfile, register, access_mechanism,
+                                     value):
         self._write_inline_assembly(outfile, [
-                "mov rcx, " + str(hex(am.address)),
+                "mov rcx, " + str(hex(access_mechanism.address)),
                 "mov rax, %[v]",
                 "mov rdx, %[v]",
                 "shr rdx, 32",
@@ -84,8 +100,8 @@ class GasX86_64IntelSyntaxAccessMechanismWriter(AccessMechanismWriter):
             clobbers='"rax", "rcx", "rdx"'
         )
 
-    def _write_inline_assembly(self, outfile, statements, outputs="", inputs="",
-                              clobbers=""):
+    def _write_inline_assembly(self, outfile, statements, outputs="",
+                               inputs="", clobbers=""):
         outfile.write("__asm__ __volatile__(\n")
         for statement in statements:
             outfile.write("    \"" + str(statement) + ";\"\n")

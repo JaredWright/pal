@@ -10,7 +10,7 @@ class Cxx11LanguageWriter(LanguageWriter):
         self._declare_string_constant(outfile, "name", register.name.lower())
         self.write_newline(outfile)
 
-        if register.long_name and register.long_name.lower() != register.name.lower():
+        if register.long_name:
             self._declare_string_constant(outfile, "long_name", register.long_name)
             self.write_newline(outfile)
 
@@ -61,12 +61,12 @@ class Cxx11LanguageWriter(LanguageWriter):
             val = '"' + field.long_name + '"'
             self._declare_variable(outfile, name, value=val, keywords=keywords)
 
-        keywords = ["constexpr", "const", self._register_size_type(register)]
+        keywords = ["constexpr", "const", "uint32_t"]
         name = "lsb"
         val = str(field.lsb)
         self._declare_variable(outfile, name, value=val, keywords=keywords)
 
-        keywords = ["constexpr", "const", self._register_size_type(register)]
+        keywords = ["constexpr", "const", "uint32_t"]
         name = "msb"
         val = str(field.msb)
         self._declare_variable(outfile, name, value=val, keywords=keywords)
