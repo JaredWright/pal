@@ -37,11 +37,11 @@ class LanguageWriter(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def declare_field_print(self, outfile: TextIO, register: Register,
-                            field: Field) -> None:
+    def call_register_get(self, outfile: TextIO, register: Register,
+                          destination: str, index: str=None) -> None:
         pass
 
     @abc.abstractmethod
-    def declare_fieldset_print(self, outfile: TextIO, register: Register,
-                               fieldset: Fieldset) -> None:
+    def call_field_get(self, outfile: TextIO, register_value: str, field: Field,
+                          destination: str) -> None:
         pass

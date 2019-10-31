@@ -50,31 +50,31 @@ class Cxx11LanguageWriter(LanguageWriter):
         self._declare_register_set_details(outfile, register)
 
     def declare_field_constants(self, outfile, register, field):
-        quals = ["constexpr", "const", "auto"]
+        keywords = ["constexpr", "const", "auto"]
         name = "name"
-        val = '"' + field.name + '"'
-        self._declare_variable(outfile, name, value=val, qualifiers=quals)
+        val = '"' + field.name.lower() + '"'
+        self._declare_variable(outfile, name, value=val, keywords=keywords)
 
-        if field.long_name and field.long_name.lower() != field.name.lower():
-            quals = ["constexpr", "const", "auto"]
+        if field.long_name:
+            keywords = ["constexpr", "const", "auto"]
             name = "long_name"
             val = '"' + field.long_name + '"'
-            self._declare_variable(outfile, name, value=val, qualifiers=quals)
+            self._declare_variable(outfile, name, value=val, keywords=keywords)
 
-        quals = ["constexpr", "const", self._register_size_type(register)]
+        keywords = ["constexpr", "const", self._register_size_type(register)]
         name = "lsb"
         val = str(field.lsb)
-        self._declare_variable(outfile, name, value=val, qualifiers=quals)
+        self._declare_variable(outfile, name, value=val, keywords=keywords)
 
-        quals = ["constexpr", "const", self._register_size_type(register)]
+        keywords = ["constexpr", "const", self._register_size_type(register)]
         name = "msb"
         val = str(field.msb)
-        self._declare_variable(outfile, name, value=val, qualifiers=quals)
+        self._declare_variable(outfile, name, value=val, keywords=keywords)
 
-        quals = ["constexpr", "const", self._register_size_type(register)]
+        keywords = ["constexpr", "const", self._register_size_type(register)]
         name = "mask"
         val = self._field_mask_hex_string(register, field)
-        self._declare_variable(outfile, name, value=val, qualifiers=quals)
+        self._declare_variable(outfile, name, value=val, keywords=keywords)
 
         self.write_newline(outfile)
 
@@ -98,15 +98,29 @@ class Cxx11LanguageWriter(LanguageWriter):
                 self._declare_field_set(outfile, register, field)
                 self._declare_field_set_val(outfile, register, field)
 
-    def declare_field_print(self, outfile, register, field):
-        if register.is_readable():
-            self._declare_field_print_value(outfile, register, field)
-            self._declare_field_print(outfile, register, field)
+    def call_register_get(self, outfile, register, destination, index="index"):
+        call = "auto {dest} = {read}({index});".format(
+            dest=destination,
+            read=self._register_read_function_name(register),
+            index=str(index) if register.is_indexed else ""
+        )
+        outfile.write(call)
+        self.write_newline(outfile)
 
-    def declare_fieldset_print(self, outfile, register, fieldset):
-        if register.is_readable():
-            self._declare_fieldset_print_value(outfile, register, fieldset)
-            self._declare_fieldset_print(outfile, register, fieldset)
+    def call_field_get(self, outfile, register_value, field, destination):
+        if field.msb == field.lsb:
+            field_read_function = str(config.is_bit_set_function),
+        else:
+            field_read_function = str(config.register_field_read_function),
+
+        call = "auto {dest} = {field_name}::{read}({reg_val});".format(
+            dest=destination,
+            field_name=field.name.lower(),
+            read=str(field_read_function[0]),
+            reg_val=str(register_value)
+        )
+        outfile.write(call)
+        self.write_newline(outfile)
 
     # -------------------------------------------------------------------------
     # private
@@ -474,9 +488,9 @@ class Cxx11LanguageWriter(LanguageWriter):
             reg_get=self._register_read_function_name(register),
             index="index" if register.is_indexed else "",
         )
-        quals = ["auto"]
+        keywords = ["auto"]
         name = "register_value"
-        self._declare_variable(outfile, name, value=reg_get, qualifiers=quals)
+        self._declare_variable(outfile, name, value=reg_get, keywords=keywords)
 
         outfile.write(config.print_function + "(register_value);")
 
@@ -491,10 +505,10 @@ class Cxx11LanguageWriter(LanguageWriter):
 
     @shoulder.gadget.cxx.function_definition
     def _declare_fieldset_print_value_details(self, outfile, register, fieldset):
-        #  outfile.write('printf("%s: %s\\n", ' + register.name.lower() + '::name);')
-        #  self.write_newline(outfile)
+        outfile.write('printf("0x%016x %s (%s)\\n", ')
+        outfile.write('value, name, long_name);')
         for field in fieldset.fields:
-            outfile.write(field.name + "::" + config.print_function + "(value);")
+            outfile.write(field.name.lower() + "::" + config.print_function + "(value);")
             self.write_newline(outfile)
 
     def _declare_field_print(self, outfile, register, field):
@@ -515,9 +529,9 @@ class Cxx11LanguageWriter(LanguageWriter):
             reg_get=self._register_read_function_name(register),
             index="index" if register.is_indexed else "",
         )
-        quals = ["auto"]
+        keywords = ["auto"]
         name = "register_value"
-        self._declare_variable(outfile, name, value=reg_get, qualifiers=quals)
+        self._declare_variable(outfile, name, value=reg_get, keywords=keywords)
 
         if field.msb == field.lsb:
             field_get = "{field_get}(register_value)".format(
@@ -528,7 +542,8 @@ class Cxx11LanguageWriter(LanguageWriter):
                 field_get=self._field_read_function_name(register, field),
             )
         name = "field_value"
-        self._declare_variable(outfile, name, value=field_get, qualifiers=quals)
+        self._declare_variable(outfile, name, value=field_get,
+                               keywords=keywords)
         outfile.write(config.print_function + "(field_value);")
 
     def _declare_field_print_value(self, outfile, register, field):
@@ -550,14 +565,28 @@ class Cxx11LanguageWriter(LanguageWriter):
             field_get = "{field_get}(register_value)".format(
                 field_get=self._field_read_function_name(register, field),
             )
-        quals = ["auto"]
+        keywords = ["auto"]
         name = "field_value"
-        self._declare_variable(outfile, name, value=field_get, qualifiers=quals)
+        self._declare_variable(outfile, name, value=field_get,
+                               keywords=keywords)
 
         if field.msb == field.lsb:
-            outfile.write('printf("%s: %s\\n", name, field_value ? "on" : "off");')
+            outfile.write('printf("    [%02u:%02u] %-16s%s%-20s", ')
+            outfile.write('lsb, msb, ')
+            outfile.write('"", ')
+            outfile.write('field_value ? ')
+            outfile.write('"\\033[1;32m \\xE2\\x9C\\x93 \\033[0m" : ')
+            outfile.write('"\\033[1;31m \\xE2\\x9C\\x97 \\033[0m", ')
+            outfile.write('name')
+            outfile.write(');')
         else:
-            outfile.write('printf("%s: 0x%016x\\n", name, field_value);')
+            outfile.write('printf("    [%02u:%02u] 0x%016x %-20s", ')
+            outfile.write('lsb, msb, field_value, name);')
+
+        if field.long_name:
+            outfile.write('printf("(%s)", long_name);')
+
+        outfile.write('printf("\\n");')
 
     def _field_mask_hex_string(self, register, field):
         mask_val = 0
@@ -612,8 +641,8 @@ class Cxx11LanguageWriter(LanguageWriter):
             indexed="_at_index" if register.is_indexed else ""
         )
 
-    def _declare_variable(self, outfile, name, value, qualifiers=[]):
-        for qual in qualifiers:
+    def _declare_variable(self, outfile, name, value, keywords=[]):
+        for qual in keywords:
             outfile.write(str(qual) + " ")
 
         outfile.write(str(name) + " = " + str(value) + ";")

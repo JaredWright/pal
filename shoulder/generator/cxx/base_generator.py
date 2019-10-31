@@ -34,7 +34,12 @@ from shoulder.writer.writer_factory import make_writer
 
 class CxxBaseGenerator(AbstractGenerator):
     def __init__(self):
-        self.writer = make_writer("c++11", "gas_x86_64_intel_syntax", "unix")
+        self.writer = make_writer(
+            "c++11",
+            "gas_x86_64_intel_syntax",
+            "printf_utf8",
+            "unix"
+        )
 
     def setup_registers(self, regs):
         pass
@@ -129,13 +134,13 @@ class CxxBaseGenerator(AbstractGenerator):
             self.writer.write_newline(outfile)
 
         if reg.is_readable():
-            self.writer.declare_fieldset_print(outfile, reg, fieldset)
+            self.writer.declare_fieldset_printer(outfile, reg, fieldset)
 
     @shoulder.gadget.cxx.namespace
     def _generate_register_field(self, outfile, reg, field):
         self.writer.declare_field_constants(outfile, reg, field)
         self.writer.declare_field_accessors(outfile, reg, field)
-        self.writer.declare_field_print(outfile, reg, field)
+        self.writer.declare_field_printer(outfile, reg, field)
 
     def _generate_external_constants(self, outfile, reg, am):
         pass
