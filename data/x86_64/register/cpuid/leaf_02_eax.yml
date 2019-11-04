@@ -24,6 +24,7 @@
             any byte descriptor of “cache type” via CPUID leaf 2.
       "
   size: 32
+  arch: x86_64
   
   access_mechanisms:
       - name: cpuid

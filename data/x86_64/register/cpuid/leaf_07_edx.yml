@@ -11,6 +11,7 @@
       EBX, ECX & EDX contain information of extended feature flags.
       "
   size: 32
+  arch: x86_64
   is_indexed: True
   
   access_mechanisms:

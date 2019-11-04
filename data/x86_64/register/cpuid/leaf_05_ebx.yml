@@ -9,6 +9,7 @@
       additional extensions for advanced power management. See Table 3-8.
       "
   size: 32
+  arch: x86_64
   
   access_mechanisms:
       - name: cpuid

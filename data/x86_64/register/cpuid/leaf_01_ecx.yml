@@ -6,6 +6,7 @@
       in ECX and EDX.
       "
   size: 32
+  arch: x86_64
   
   access_mechanisms:
       - name: cpuid

@@ -11,6 +11,7 @@
       caches (they do not control TLB caching of page-directory information)
       "
   size: 64
+  arch: x86_64
   
   access_mechanisms:
       - name: mov_read

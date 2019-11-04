@@ -26,6 +26,7 @@
       Software Developer’s Manual, Volume 3A.
       "
   size: 32
+  arch: x86_64
   is_indexed: True
   
   access_mechanisms:
