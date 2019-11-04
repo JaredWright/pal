@@ -22,5 +22,5 @@ class CxxTestAccessMechanismWriter(AccessMechanismWriter):
 
     def call_writable_access_mechanism(self, outfile, register,
                                        access_mechanism, value):
-        outfile.write("mock_register = " + str(value))
+        outfile.write("mock_register = " + str(value) + str(";"))
         self.write_newline(outfile)
