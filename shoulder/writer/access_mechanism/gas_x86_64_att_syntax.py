@@ -105,12 +105,24 @@ class GasX86_64AttSyntaxAccessMechanismWriter(AccessMechanismWriter):
 
     def _write_inline_assembly(self, outfile, statements, outputs="",
                                inputs="", clobbers=""):
-        outfile.write("__asm__ __volatile__(\n")
+        outfile.write("__asm__ __volatile__(")
+        self.write_newline(outfile)
         for statement in statements:
-            outfile.write("    \"" + str(statement) + ";\"\n")
+            self.write_indent(outfile)
+            outfile.write("\"" + str(statement) + ";\"")
+            self.write_newline(outfile)
 
-        outfile.write("    : " + str(outputs) + "\n")
-        outfile.write("    : " + str(inputs) + "\n")
-        outfile.write("    : " + str(clobbers) + "\n")
+        self.write_indent(outfile)
+        outfile.write(": " + str(outputs))
+        self.write_newline(outfile)
+
+        self.write_indent(outfile)
+        outfile.write(": " + str(inputs))
+        self.write_newline(outfile)
+
+        self.write_indent(outfile)
+        outfile.write(": " + str(clobbers))
+        self.write_newline(outfile)
+
         outfile.write(");")
         self.write_newline(outfile)

@@ -75,7 +75,6 @@ class CxxHeaderGenerator(AbstractGenerator):
     @shoulder.gadget.include_guard
     @shoulder.gadget.header_depends
     @shoulder.gadget.cxx.namespace
-    #  @shoulder.gadget.external_component
     def _generate_register(self, outfile, reg):
         self.writer.write_newline(outfile)
         self._generate_register_comment(outfile, reg)
@@ -85,12 +84,13 @@ class CxxHeaderGenerator(AbstractGenerator):
         self._generate_register_accessors(outfile, reg)
 
     def _generate_register_comment(self, outfile, reg):
-        comment = "{name} ({long_name})\n".format(
+        comment = "{name} ({long_name}){separator}{purpose}".format(
             name=str(reg.name),
-            long_name=str(reg.long_name)
+            long_name=str(reg.long_name),
+            separator=" - " if reg.purpose else "",
+            purpose=str(reg.purpose)
         )
         self.writer.declare_comment(outfile, comment, wrap=75)
-        self.writer.declare_comment(outfile, str(reg.purpose), wrap=75)
 
     @shoulder.gadget.cxx.namespace
     def _generate_register_accessors(self, outfile, reg):
@@ -132,6 +132,3 @@ class CxxHeaderGenerator(AbstractGenerator):
         self.writer.declare_field_constants(outfile, reg, field)
         self.writer.declare_field_accessors(outfile, reg, field)
         self.writer.declare_field_printer(outfile, reg, field)
-
-    #  def _generate_external_constants(self, outfile, reg, am):
-    #      pass

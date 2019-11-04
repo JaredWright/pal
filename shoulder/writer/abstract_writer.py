@@ -18,3 +18,6 @@ class AbstractWriter(LanguageWriter, AccessMechanismWriter, PrinterWriter,
         if not hasattr(self, "_gadgets"):
             self._gadgets = create_gadget_properties()
         return self._gadgets
+
+    def get_writer(self):
+        return self
