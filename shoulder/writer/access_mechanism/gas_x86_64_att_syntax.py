@@ -5,6 +5,9 @@ from shoulder.logger import logger
 
 class GasX86_64AttSyntaxAccessMechanismWriter(AccessMechanismWriter):
 
+    def declare_access_mechanism_dependencies(self, outfile, register):
+        pass
+
     def call_readable_access_mechanism(self, outfile, register,
                                        access_mechanism, result):
         if access_mechanism.name == "mov_read":
@@ -41,7 +44,7 @@ class GasX86_64AttSyntaxAccessMechanismWriter(AccessMechanismWriter):
     def _call_mov_read_access_mechanism(self, outfile, register,
                                         access_mechanism, result):
         self._write_inline_assembly(outfile, [
-                "mov %% " + access_mechanism.source_mnemonic + ", %[v]"
+                "mov %%" + access_mechanism.source_mnemonic + ", %[v]"
             ],
             outputs='[v] "=r"(' + str(result) + ')'
         )

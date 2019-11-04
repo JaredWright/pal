@@ -109,9 +109,9 @@ class Cxx11LanguageWriter(LanguageWriter):
 
     def call_field_get(self, outfile, register_value, field, destination):
         if field.msb == field.lsb:
-            field_read_function = str(config.is_bit_set_function),
+            field_read_function = str(config.bit_is_set_function),
         else:
-            field_read_function = str(config.register_field_read_function),
+            field_read_function = str(config.field_read_function),
 
         call = "auto {dest} = {field_name}::{read}({reg_val});".format(
             dest=destination,
@@ -156,7 +156,7 @@ class Cxx11LanguageWriter(LanguageWriter):
         gadget.return_type = size_type
         gadget.args = []
         gadget.name = "{name}".format(
-            name=config.is_bit_set_function
+            name=config.bit_is_set_function
         )
 
         if register.is_indexed:
@@ -186,7 +186,7 @@ class Cxx11LanguageWriter(LanguageWriter):
         gadget.return_type = size_type
         gadget.args = [(size_type, "value")]
         gadget.name = "{name}".format(
-            name=config.is_bit_set_function
+            name=config.bit_is_set_function
         )
 
         self._declare_bitfield_is_set_val_details(outfile, register, field)
@@ -206,7 +206,7 @@ class Cxx11LanguageWriter(LanguageWriter):
         gadget.return_type = size_type
         gadget.args = []
         gadget.name = "{name}".format(
-            name=config.is_bit_cleared_function
+            name=config.bit_is_clear_function
         )
 
         if register.is_indexed:
@@ -236,7 +236,7 @@ class Cxx11LanguageWriter(LanguageWriter):
         gadget.return_type = size_type
         gadget.args = [(size_type, "value")]
         gadget.name = "{name}".format(
-            name=config.is_bit_cleared_function
+            name=config.bit_is_clear_function
         )
 
         self._declare_bitfield_is_clear_val_details(outfile, register, field)
@@ -354,7 +354,7 @@ class Cxx11LanguageWriter(LanguageWriter):
         gadget.return_type = size_type
         gadget.args = []
         gadget.name = "{name}".format(
-            name=config.register_field_read_function
+            name=config.field_read_function
         )
 
         if register.is_indexed:
@@ -385,7 +385,7 @@ class Cxx11LanguageWriter(LanguageWriter):
         gadget.return_type = size_type
         gadget.args = [(size_type, "value")]
         gadget.name = "{name}".format(
-            name=config.register_field_read_function
+            name=config.field_read_function
         )
 
         self._declare_field_get_val_details(outfile, register, field)
@@ -407,7 +407,7 @@ class Cxx11LanguageWriter(LanguageWriter):
         gadget.return_type = "void"
         gadget.args = [(size_type, "value")]
         gadget.name = "{name}".format(
-            name=config.register_field_write_function
+            name=config.field_write_function
         )
 
         if register.is_indexed:
@@ -450,7 +450,7 @@ class Cxx11LanguageWriter(LanguageWriter):
         gadget.return_type = "void"
         gadget.args = [(size_type, "field_value"), (size_type, "&register_value")]
         gadget.name = "{name}".format(
-            name=config.register_field_write_function
+            name=config.field_write_function
         )
 
         self._declare_field_set_val_details(outfile, register, field)
@@ -630,14 +630,14 @@ class Cxx11LanguageWriter(LanguageWriter):
     def _bitfield_is_set_function_name(self, register, field):
         return "{field_name}::{read}{indexed}".format(
             field_name=field.name.lower(),
-            read=config.is_bit_set_function,
+            read=config.bit_is_set_function,
             indexed="_at_index" if register.is_indexed else ""
         )
 
     def _field_read_function_name(self, register, field):
         return "{field_name}::{read}{indexed}".format(
             field_name=field.name.lower(),
-            read=config.register_field_read_function,
+            read=config.field_read_function,
             indexed="_at_index" if register.is_indexed else ""
         )
 

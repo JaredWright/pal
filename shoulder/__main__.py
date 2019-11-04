@@ -22,37 +22,83 @@
 
 import sys
 import os
+import copy
 
 from shoulder.cmd_args import parse_cmd_args
 from shoulder.parser import parse_registers
-from shoulder.generator import generate_all
+from shoulder.writer.writer_factory import make_writer
+
+from shoulder.generator.cxx_header_generator import CxxHeaderGenerator
+
+
+def main_intel_x64(config, generator):
+
+    data_path = config.shoulder_data_dir
+    print("DATA PATH: " + data_path)
+
+    indir = os.path.join(data_path, "x86_64/register/control_register")
+    outdir = os.path.join(config.shoulder_output_dir, "control_register")
+    os.makedirs(outdir, exist_ok=True)
+    regs = parse_registers(indir)
+    generator.generate(copy.deepcopy(regs), outdir)
+
+    indir = os.path.join(data_path, "x86_64/register/cpuid")
+    outdir = os.path.join(config.shoulder_output_dir, "cpuid")
+    os.makedirs(outdir, exist_ok=True)
+    regs = parse_registers(indir)
+    generator.generate(copy.deepcopy(regs), outdir)
+
+    indir = os.path.join(data_path, "x86_64/register/msr")
+    outdir = os.path.join(config.shoulder_output_dir, "msr")
+    os.makedirs(outdir, exist_ok=True)
+    regs = parse_registers(indir)
+    generator.generate(copy.deepcopy(regs), outdir)
+
+
+def main_armv8a(config, generator):
+    data_path = config.shoulder_data_dir
+
+    indir = os.path.join(data_path, "armv8-a/register/aarch64")
+    outdir = os.path.join(config.shoulder_output_dir, "aarch64")
+    os.makedirs(outdir, exist_ok=True)
+    regs = parse_registers(indir)
+    generator.generate(copy.deepcopy(regs), outdir)
+
+    indir = os.path.join(data_path, "armv8-a/register/aarch32")
+    outdir = os.path.join(config.shoulder_output_dir, "aarch32")
+    os.makedirs(outdir, exist_ok=True)
+    regs = parse_registers(indir)
+    generator.generate(copy.deepcopy(regs), outdir)
+
+    indir = os.path.join(data_path, "armv8-a/register/external")
+    outdir = os.path.join(config.shoulder_output_dir, "external")
+    os.makedirs(outdir, exist_ok=True)
+    regs = parse_registers(indir)
+    generator.generate(copy.deepcopy(regs), outdir)
 
 
 def shoulder_main():
     config = parse_cmd_args(sys.argv[1:])
 
-    path = "/home/wrightj/pal_workspace/shoulder/data/x86_64/register/control_register"
-    regs = parse_registers(path)
-    generate_all(regs, os.path.join(config.shoulder_output_dir, "control_register"))
+    writer = make_writer(
+        config.arch,
+        config.language,
+        config.access_mechanism,
+        config.print_style,
+        config.file_format
+    )
 
-    path = "/home/wrightj/pal_workspace/shoulder/data/x86_64/register/cpuid"
-    regs = parse_registers(path)
-    generate_all(regs, os.path.join(config.shoulder_output_dir, "cpuid"))
+    if config.generator == "c++_header":
+        generator = CxxHeaderGenerator(writer)
+    else:
+        raise Exception("Invalid generator: " + str(config.generator))
 
-    path = "/home/wrightj/pal_workspace/shoulder/data/x86_64/register/msr"
-    regs = parse_registers(path)
-    generate_all(regs, os.path.join(config.shoulder_output_dir, "msr"))
+    if config.arch == "intel_x64":
+        main_intel_x64(config, generator)
+    elif config.arch == "armv8-a":
+        main_armv8a(config, generator)
+    else:
+        raise Exception("Invalid architecture: " + str(config.arch))
 
-    #  path = "/home/wrightj/pal_workspace/shoulder/data/armv8-a/register/aarch64"
-    #  regs = parse_registers(path)
-    #  generate_all(regs, os.path.join(config.shoulder_output_dir, "aarch64"))
-
-    #  path = "/home/wrightj/pal_workspace/shoulder/data/armv8-a/register/aarch32"
-    #  regs = parse_registers(path)
-    #  generate_all(regs, os.path.join(config.shoulder_output_dir, "aarch32"))
-
-    #  path = "/home/wrightj/pal_workspace/shoulder/data/armv8-a/register/external"
-    #  regs = parse_registers(path)
-    #  generate_all(regs, os.path.join(config.shoulder_output_dir, "external"))
 
 shoulder_main()
