@@ -14,7 +14,7 @@ class Cxx11LanguageWriter(LanguageWriter):
             self._declare_string_constant(outfile, "long_name", register.long_name)
             self.write_newline(outfile)
 
-        if register.access_mechanisms["rdmsr"]:
+        if register.access_mechanisms.get("rdmsr"):
             addr = register.access_mechanisms["rdmsr"][0].address
             self._declare_hex_integer_constant(outfile, "address", addr)
             self.write_newline(outfile)

@@ -105,7 +105,7 @@ class CxxHeaderGenerator(AbstractGenerator):
 
         for idx, fieldset in enumerate(fieldsets):
             if len(fieldsets) > 1:
-                self.writer.delcare_comment(outfile, fieldset.condition)
+                self.writer.declare_comment(outfile, fieldset.condition)
                 self.gadgets["shoulder.cxx.namespace"].name = "fieldset_" + str(idx + 1)
                 self._generate_fieldset_in_namespace(outfile, reg, fieldsets[0])
             else:

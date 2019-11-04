@@ -7,7 +7,6 @@ from shoulder.config import config
 from shoulder.exception import ShoulderGeneratorException
 from shoulder.filter import filters
 from shoulder.transform import transforms
-#  import shoulder.gadget
 
 
 class YamlDataGenerator(AbstractGenerator):
@@ -155,6 +154,7 @@ class YamlDataGenerator(AbstractGenerator):
                 outfile.write("\n")
 
     def _generate_fields(self, outfile, reg, fs):
+        outfile.write("        fields:\n")
         fs.fields.reverse()
         for idx, f in enumerate(fs.fields):
             outfile.write("          - name: " + str(f.name) + "\n")

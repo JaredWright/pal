@@ -47,11 +47,12 @@ def parse_registers(spec_path):
 
     logger.info("Parsing registers from: " + str(spec_path))
 
-    #  paths = glob.glob(spec_path + "/*.xml")
-    paths = glob.glob(spec_path + "/*.yml")
     regs = []
+
+    #  paths = glob.glob(spec_path + "/*.xml")
     #  parser = ArmV8XmlParser()
-    #  parser = ArmV8XmlParser()
+
+    paths = glob.glob(spec_path + "/*.yml")
     parser = ShoulderModelParser()
 
     for path in paths:

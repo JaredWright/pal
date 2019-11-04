@@ -27,10 +27,10 @@ from dataclasses import dataclass
 class STR(AbstractAccessMechanism):
     """ Access mechanism for writing a memory mapped register """
 
-    component: str
+    component: str = ""
     """ Component that the register is mapped to """
 
-    offset: int
+    offset: int = 0
     """ Register offset from base address """
 
     name: str = "str"

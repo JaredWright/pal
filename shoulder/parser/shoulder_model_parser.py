@@ -32,6 +32,7 @@ import shoulder.model.x86_64.access_mechanism
 from yaml import load, dump
 from yaml import CLoader as Loader, CDumper as Dumper
 
+
 class ShoulderModelParser(AbstractParser):
     def parse_file(self, path):
         registers = []
@@ -44,7 +45,15 @@ class ShoulderModelParser(AbstractParser):
                 data = load(infile, Loader)
 
                 for item in data:
-                    register = shoulder.model.x86_64.register.x86_64Register()
+                    arch = item["arch"]
+
+                    if arch == "x86_64":
+                        register = shoulder.model.x86_64.register.x86_64Register()
+                    elif arch == "armv8-a":
+                        register = shoulder.model.armv8a.register.ARMv8ARegister()
+                    else:
+                        raise Exception("register definition missing architecutre (arch)")
+
                     self._parse_register(register, item)
                     self._parse_access_mechanisms(register, item)
                     self._parse_fieldsets(register, item)
@@ -73,8 +82,15 @@ class ShoulderModelParser(AbstractParser):
             register.is_optional = yml["is_optional"]
         if "is_indexed" in yml:
             register.is_indexed = yml["is_indexed"]
+        if "execution_state" in yml:
+            register.execution_state = yml["execution_state"]
+        if "is_banked" in yml:
+            register.is_banked = yml["is_banked"]
 
     def _parse_access_mechanisms(self, register, yml):
+        if not yml["access_mechanisms"]:
+            return
+
         for am_yml in yml["access_mechanisms"]:
             if am_yml["name"] == "mov_read":
                 am = shoulder.model.x86_64.access_mechanism.MOVRead()
@@ -107,6 +123,113 @@ class ShoulderModelParser(AbstractParser):
                 am.address = am_yml["address"]
                 register.access_mechanisms["wrmsr"].append(am)
 
+            elif am_yml["name"] == "mrs_register":
+                am = shoulder.model.armv8a.access_mechanism.MRSRegister()
+                am.name = am_yml["name"]
+                am.op0 = am_yml["op0"]
+                am.op1 = am_yml["op1"]
+                am.op2 = am_yml["op2"]
+                am.crn = am_yml["crn"]
+                am.crm = am_yml["crm"]
+                am.operand_mnemonic = am_yml["operand_mnemonic"]
+                register.access_mechanisms["mrs_register"].append(am)
+
+            elif am_yml["name"] == "msr_register":
+                am = shoulder.model.armv8a.access_mechanism.MSRRegister()
+                am.name = am_yml["name"]
+                am.op0 = am_yml["op0"]
+                am.op1 = am_yml["op1"]
+                am.op2 = am_yml["op2"]
+                am.crn = am_yml["crn"]
+                am.crm = am_yml["crm"]
+                am.operand_mnemonic = am_yml["operand_mnemonic"]
+                register.access_mechanisms["msr_register"].append(am)
+
+            elif am_yml["name"] == "mcr":
+                am = shoulder.model.armv8a.access_mechanism.MCR()
+                am.name = am_yml["name"]
+                am.coproc = am_yml["coproc"]
+                am.opc1 = am_yml["opc1"]
+                am.opc2 = am_yml["opc2"]
+                am.crn = am_yml["crn"]
+                am.crm = am_yml["crm"]
+                register.access_mechanisms["mcr"].append(am)
+
+            elif am_yml["name"] == "mcrr":
+                am = shoulder.model.armv8a.access_mechanism.MCRR()
+                am.name = am_yml["name"]
+                am.coproc = am_yml["coproc"]
+                am.opc1 = am_yml["opc1"]
+                am.crm = am_yml["crm"]
+                register.access_mechanisms["mcrr"].append(am)
+
+            elif am_yml["name"] == "mrc":
+                am = shoulder.model.armv8a.access_mechanism.MRC()
+                am.name = am_yml["name"]
+                am.coproc = am_yml["coproc"]
+                am.opc1 = am_yml["opc1"]
+                am.opc2 = am_yml["opc2"]
+                am.crn = am_yml["crn"]
+                am.crm = am_yml["crm"]
+                register.access_mechanisms["mrc"].append(am)
+
+            elif am_yml["name"] == "mrrc":
+                am = shoulder.model.armv8a.access_mechanism.MRRC()
+                am.name = am_yml["name"]
+                am.coproc = am_yml["coproc"]
+                am.opc1 = am_yml["opc1"]
+                am.crm = am_yml["crm"]
+                register.access_mechanisms["mrrc"].append(am)
+
+            elif am_yml["name"] == "mrs_banked":
+                am = shoulder.model.armv8a.access_mechanism.MRSBanked()
+                am.name = am_yml["name"]
+                am.m = am_yml["m"]
+                am.r = am_yml["r"]
+                am.m1 = am_yml["m1"]
+                register.access_mechanisms["mrs_banked"].append(am)
+
+            elif am_yml["name"] == "msr_banked":
+                am = shoulder.model.armv8a.access_mechanism.MSRBanked()
+                am.name = am_yml["name"]
+                am.m = am_yml["m"]
+                am.r = am_yml["r"]
+                am.m1 = am_yml["m1"]
+                register.access_mechanisms["msr_banked"].append(am)
+
+            elif am_yml["name"] == "msr_immediate":
+                am = shoulder.model.armv8a.access_mechanism.MSRImmediate()
+                am.name = am_yml["name"]
+                register.access_mechanisms["msr_immediate"].append(am)
+
+            elif am_yml["name"] == "ldr":
+                am = shoulder.model.armv8a.access_mechanism.LDR()
+                am.name = am_yml["name"]
+                am.component = am_yml["component"]
+                am.offset = am_yml["offset"]
+                register.access_mechanisms["ldr"].append(am)
+
+            elif am_yml["name"] == "str":
+                am = shoulder.model.armv8a.access_mechanism.STR()
+                am.name = am_yml["name"]
+                am.component = am_yml["component"]
+                am.offset = am_yml["offset"]
+                register.access_mechanisms["str"].append(am)
+
+            elif am_yml["name"] == "vmrs":
+                am = shoulder.model.armv8a.access_mechanism.VMRS()
+                am.name = am_yml["name"]
+                am.reg = am_yml["reg"]
+                am.operand_mnemonic = am_yml["operand_mnemonic"]
+                register.access_mechanisms["vmrs"].append(am)
+
+            elif am_yml["name"] == "vmsr":
+                am = shoulder.model.armv8a.access_mechanism.VMSR()
+                am.name = am_yml["name"]
+                am.reg = am_yml["reg"]
+                am.operand_mnemonic = am_yml["operand_mnemonic"]
+                register.access_mechanisms["vmsr"].append(am)
+
     def _parse_fieldsets(self, register, yml):
         if "fieldsets" not in yml:
             return
@@ -121,7 +244,7 @@ class ShoulderModelParser(AbstractParser):
 
             for field_yml in fieldset_yml["fields"]:
                 field = shoulder.model.Field()
-                field.name = self._strip_string(field_yml["name"])
+                field.name = self._strip_string(str(field_yml["name"]))
                 field.lsb = int(field_yml["lsb"])
                 field.msb = int(field_yml["msb"])
                 if "long_name" in field_yml:

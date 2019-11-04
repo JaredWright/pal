@@ -27,10 +27,10 @@ from dataclasses import dataclass
 class VMSR(AbstractAccessMechanism):
     """ Access mechanism for writing a system vector control register """
 
-    reg: bytes
+    reg: bytes = 0
     """ ? """
 
-    operand_mnemonic: str
+    operand_mnemonic: str = ""
     """ The operand mnemonic of the register to be accessed """
 
     name: str = "vmsr"
