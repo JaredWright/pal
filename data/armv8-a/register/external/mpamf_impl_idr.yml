@@ -24,6 +24,7 @@
       - name: fieldset_1
         size: 32
 
+        fields:
           - name: IMP_DEF
             lsb: 0
             msb: 31

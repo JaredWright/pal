@@ -26,6 +26,7 @@
       - name: fieldset_1
         size: 64
 
+        fields:
           - name: Return_DTRTX
             lsb: 0
             msb: 31

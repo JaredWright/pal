@@ -24,6 +24,7 @@
       - name: fieldset_1
         size: 32
 
+        fields:
           - name: CPBM_WD
             lsb: 0
             msb: 15

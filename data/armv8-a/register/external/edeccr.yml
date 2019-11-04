@@ -24,6 +24,7 @@
         condition: "When ARMv8.2-Debug is implemented"
         size: 32
 
+        fields:
           - name: SE<n>
             lsb: 0
             msb: 3
@@ -48,6 +49,7 @@
       - name: fieldset_2
         size: 32
 
+        fields:
           - name: SE<n>
             lsb: 0
             msb: 3

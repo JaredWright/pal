@@ -35,6 +35,7 @@
         condition: "When exiting Debug state to AArch32 state"
         size: 64
 
+        fields:
           - name: M[3:0]
             lsb: 0
             msb: 3
@@ -139,6 +140,7 @@
         condition: "When entering Debug state from AArch64 state and exiting Debug state to AArch64 state"
         size: 64
 
+        fields:
           - name: M[3:0]
             lsb: 0
             msb: 3

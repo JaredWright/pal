@@ -26,6 +26,7 @@
       - name: fieldset_1
         size: 64
 
+        fields:
           - name: Valid
             lsb: 0
             msb: 1

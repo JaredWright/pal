@@ -24,6 +24,7 @@
       - name: fieldset_1
         size: 64
 
+        fields:
           - name: ERR<n>PFGF
             lsb: 0
             msb: 63

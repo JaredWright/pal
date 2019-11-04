@@ -34,6 +34,7 @@
         condition: "When ELUsingAArch32(EL1)"
         size: 64
 
+        fields:
           - name: 0
             lsb: 0
             msb: 11
@@ -61,6 +62,7 @@
         condition: "When !ELUsingAArch32(EL1)"
         size: 64
 
+        fields:
           - name: ISS
             lsb: 0
             msb: 23

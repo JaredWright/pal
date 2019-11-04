@@ -33,6 +33,7 @@
         condition: "When DISR_EL1.IDS == 0"
         size: 64
 
+        fields:
           - name: DFSC
             lsb: 0
             msb: 5
@@ -77,6 +78,7 @@
         condition: "When DISR_EL1.IDS == 1"
         size: 64
 
+        fields:
           - name: ISS
             lsb: 0
             msb: 23

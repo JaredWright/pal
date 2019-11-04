@@ -46,6 +46,7 @@
         condition: "When the instruction returned a 32-bit value to the PAR, PAR.F==0"
         size: 64
 
+        fields:
           - name: F
             lsb: 0
             msb: 0
@@ -95,6 +96,7 @@
         condition: "When the instruction returned a 32-bit value to the PAR, PAR.F==1"
         size: 64
 
+        fields:
           - name: F
             lsb: 0
             msb: 0
@@ -130,6 +132,7 @@
         condition: "When the instruction returned a 64-bit value to the PAR, PAR.F==0"
         size: 64
 
+        fields:
           - name: F
             lsb: 0
             msb: 0
@@ -172,6 +175,7 @@
         condition: "When the instruction returned a 64-bit value to the PAR, PAR.F==1"
         size: 64
 
+        fields:
           - name: F
             lsb: 0
             msb: 0

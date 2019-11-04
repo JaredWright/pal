@@ -33,6 +33,7 @@
       - name: fieldset_1
         size: 64
 
+        fields:
           - name: PARTID_I
             lsb: 0
             msb: 15

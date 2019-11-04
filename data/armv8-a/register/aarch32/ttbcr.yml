@@ -33,6 +33,7 @@
         condition: "When TTBCR.EAE == 0"
         size: 32
 
+        fields:
           - name: N
             lsb: 0
             msb: 2
@@ -63,6 +64,7 @@
         condition: "When TTBCR.EAE == 1"
         size: 32
 
+        fields:
           - name: T0SZ
             lsb: 0
             msb: 2

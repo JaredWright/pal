@@ -19,6 +19,7 @@
       - name: fieldset_1
         size: 64
 
+        fields:
           - name: Stalled
             lsb: 0
             msb: 0

@@ -33,6 +33,7 @@
         condition: "When TTBCR.EAE == 0"
         size: 32
 
+        fields:
           - name: IR<n>
             lsb: 0
             msb: 15

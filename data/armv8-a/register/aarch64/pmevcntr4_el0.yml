@@ -33,6 +33,7 @@
         condition: "When ARMv8.5-PMU is implemented"
         size: 64
 
+        fields:
           - name: Event_counter_n
             lsb: 0
             msb: 63
@@ -40,6 +41,7 @@
       - name: fieldset_2
         size: 64
 
+        fields:
           - name: Event_counter_n
             lsb: 0
             msb: 31

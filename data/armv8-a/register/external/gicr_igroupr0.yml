@@ -23,6 +23,7 @@
       - name: fieldset_1
         size: 32
 
+        fields:
           - name: Redistributor_group_status_bit<x>
             lsb: 0
             msb: 31

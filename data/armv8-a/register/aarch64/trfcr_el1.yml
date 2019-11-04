@@ -50,6 +50,7 @@
       - name: fieldset_1
         size: 64
 
+        fields:
           - name: E0TRE
             lsb: 0
             msb: 0

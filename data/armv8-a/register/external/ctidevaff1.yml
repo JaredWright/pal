@@ -20,6 +20,7 @@
       - name: fieldset_1
         size: 32
 
+        fields:
           - name: MPIDR_EL1_high_half
             lsb: 0
             msb: 31

@@ -33,6 +33,7 @@
         condition: "When exception taken from AArch32 state"
         size: 64
 
+        fields:
           - name: M[3:0]
             lsb: 0
             msb: 3
@@ -137,6 +138,7 @@
         condition: "When exception taken from AArch64 state"
         size: 64
 
+        fields:
           - name: M[3:0]
             lsb: 0
             msb: 3

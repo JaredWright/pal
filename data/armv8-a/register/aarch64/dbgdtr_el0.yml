@@ -33,6 +33,7 @@
       - name: fieldset_1
         size: 64
 
+        fields:
           - name: LowWord
             lsb: 0
             msb: 31

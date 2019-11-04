@@ -32,6 +32,7 @@
         condition: "When TTBCR.EAE == 1"
         size: 32
 
+        fields:
           - name: Attr<n>
             lsb: 0
             msb: 31

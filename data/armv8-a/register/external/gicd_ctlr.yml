@@ -24,6 +24,7 @@
         condition: "When access is Secure, in a system that supports two Security states"
         size: 32
 
+        fields:
           - name: EnableGrp0
             lsb: 0
             msb: 0
@@ -70,6 +71,7 @@
         condition: "When access is Non-secure, in a system that supports two Security states"
         size: 32
 
+        fields:
           - name: EnableGrp1
             lsb: 0
             msb: 0
@@ -100,6 +102,7 @@
         condition: "When in a system that supports only a single Security state"
         size: 32
 
+        fields:
           - name: EnableGrp0
             lsb: 0
             msb: 0

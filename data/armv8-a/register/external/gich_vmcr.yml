@@ -25,6 +25,7 @@
       - name: fieldset_1
         size: 32
 
+        fields:
           - name: VENG0
             lsb: 0
             msb: 0

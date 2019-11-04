@@ -52,6 +52,7 @@
         condition: "When HCR_EL2.E2H != 0b1 or HCR_EL2.TGE != 0b1"
         size: 64
 
+        fields:
           - name: M
             lsb: 0
             msb: 0
@@ -276,6 +277,7 @@
         condition: "When HCR_EL2.E2H == 0b1 and HCR_EL2.TGE == 0b1"
         size: 64
 
+        fields:
           - name: M
             lsb: 0
             msb: 0

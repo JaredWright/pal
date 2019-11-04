@@ -37,6 +37,7 @@
       - name: fieldset_1
         size: 4096
 
+        fields:
           - name: BWPBM<n>
             lsb: 0
             msb: 4095

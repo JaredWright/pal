@@ -32,6 +32,7 @@
       - name: fieldset_1
         size: 32
 
+        fields:
           - name: Event_type_register_or_PMCCFILTR
             lsb: 0
             msb: 31

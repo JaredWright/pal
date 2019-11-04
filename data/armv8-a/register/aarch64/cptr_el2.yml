@@ -52,6 +52,7 @@
         condition: "When HCR_EL2.E2H == 0"
         size: 64
 
+        fields:
           - name: 1
             lsb: 0
             msb: 7
@@ -126,6 +127,7 @@
         condition: "When HCR_EL2.E2H == 1"
         size: 64
 
+        fields:
           - name: 0
             lsb: 0
             msb: 15

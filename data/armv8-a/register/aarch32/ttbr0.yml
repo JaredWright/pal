@@ -47,6 +47,7 @@
         condition: "When TTBCR.EAE == 0"
         size: 64
 
+        fields:
           - name: IRGN[1]
             lsb: 0
             msb: 0
@@ -84,6 +85,7 @@
         condition: "When TTBCR.EAE == 1"
         size: 64
 
+        fields:
           - name: 0
             lsb: 0
             msb: 0

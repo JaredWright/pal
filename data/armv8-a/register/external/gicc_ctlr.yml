@@ -25,6 +25,7 @@
         condition: "When GICD_CTLR.DS==0, Non-secure access"
         size: 32
 
+        fields:
           - name: EnableGrp1
             lsb: 0
             msb: 0
@@ -60,6 +61,7 @@
         condition: "When GICD_CTLR.DS==0, Secure access"
         size: 32
 
+        fields:
           - name: EnableGrp0
             lsb: 0
             msb: 0
@@ -114,6 +116,7 @@
         condition: "When GICD_CTLR.DS == 0b1"
         size: 32
 
+        fields:
           - name: EnableGrp0
             lsb: 0
             msb: 0

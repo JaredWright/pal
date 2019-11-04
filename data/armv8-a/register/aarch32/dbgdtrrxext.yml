@@ -31,6 +31,7 @@
       - name: fieldset_1
         size: 32
 
+        fields:
           - name: Update_DTRRX_without_side-effect
             lsb: 0
             msb: 31

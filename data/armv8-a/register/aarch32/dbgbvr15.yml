@@ -35,6 +35,7 @@
         condition: "When DBGBCR<n>.BT == 0b0x0x"
         size: 32
 
+        fields:
           - name: 0
             lsb: 0
             msb: 1
@@ -48,6 +49,7 @@
         condition: "When DBGBCR<n>.BT == 0b001x"
         size: 32
 
+        fields:
           - name: ContextID
             lsb: 0
             msb: 31
@@ -56,6 +58,7 @@
         condition: "When DBGBCR<n>.BT == 0b101x and HaveEL(EL2)"
         size: 32
 
+        fields:
           - name: ContextID
             lsb: 0
             msb: 31
@@ -64,6 +67,7 @@
         condition: "When DBGBCR<n>.BT == 0bx11x, HaveEL(EL2) and ARMv8.1-VHE is implemented"
         size: 32
 
+        fields:
           - name: ContextID
             lsb: 0
             msb: 31

@@ -24,6 +24,7 @@
         condition: "When ARMv8.1-VHE is not implemented"
         size: 64
 
+        fields:
           - name: PC_Sample_low_word
             lsb: 0
             msb: 31
@@ -36,6 +37,7 @@
         condition: "When ARMv8.1-VHE is implemented and EDSCR.SC2 == 0"
         size: 64
 
+        fields:
           - name: 0
             lsb: 0
             msb: 31
@@ -58,6 +60,7 @@
         condition: "When ARMv8.1-VHE is implemented and EDSCR.SC2 == 1"
         size: 64
 
+        fields:
           - name: 0
             lsb: 0
             msb: 31
@@ -103,6 +106,7 @@
         condition: "When ARMv8.2-PCSample is implemented"
         size: 64
 
+        fields:
           - name: 0
             lsb: 0
             msb: 63

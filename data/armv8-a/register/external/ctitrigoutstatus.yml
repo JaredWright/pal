@@ -21,6 +21,7 @@
       - name: fieldset_1
         size: 32
 
+        fields:
           - name: TROUT<n>
             lsb: 0
             msb: 31

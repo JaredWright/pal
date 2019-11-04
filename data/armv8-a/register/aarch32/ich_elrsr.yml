@@ -22,6 +22,7 @@
       - name: fieldset_1
         size: 32
 
+        fields:
           - name: Status<n>
             lsb: 0
             msb: 15

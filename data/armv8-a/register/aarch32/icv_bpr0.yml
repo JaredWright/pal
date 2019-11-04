@@ -32,6 +32,7 @@
       - name: fieldset_1
         size: 32
 
+        fields:
           - name: BinaryPoint
             lsb: 0
             msb: 2

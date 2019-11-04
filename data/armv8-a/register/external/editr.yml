@@ -24,6 +24,7 @@
         condition: "When in AArch32 state"
         size: 32
 
+        fields:
           - name: T32First
             lsb: 0
             msb: 15
@@ -36,6 +37,7 @@
         condition: "When in AArch64 state"
         size: 32
 
+        fields:
           - name: A64_instruction_to_be_executed_on_the_PE
             lsb: 0
             msb: 31

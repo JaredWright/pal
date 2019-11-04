@@ -52,6 +52,7 @@
       - name: fieldset_1
         size: 64
 
+        fields:
           - name: Software_Context_Number
             lsb: 0
             msb: 63

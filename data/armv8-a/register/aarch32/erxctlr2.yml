@@ -31,6 +31,7 @@
       - name: fieldset_1
         size: 32
 
+        fields:
           - name: Bits_[63:32]_of_ERR<n>CTLR
             lsb: 0
             msb: 31

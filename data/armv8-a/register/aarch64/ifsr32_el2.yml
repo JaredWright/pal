@@ -34,6 +34,7 @@
         condition: "When TTBCR.EAE == 0"
         size: 64
 
+        fields:
           - name: FS[3:0]
             lsb: 0
             msb: 3
@@ -78,6 +79,7 @@
         condition: "When TTBCR.EAE == 1"
         size: 64
 
+        fields:
           - name: STATUS
             lsb: 0
             msb: 5

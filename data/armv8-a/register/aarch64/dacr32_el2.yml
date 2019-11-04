@@ -33,6 +33,7 @@
       - name: fieldset_1
         size: 64
 
+        fields:
           - name: D<n>
             lsb: 0
             msb: 31

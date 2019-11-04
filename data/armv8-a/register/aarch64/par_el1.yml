@@ -35,6 +35,7 @@
         condition: "When PAR_EL1.F == 0b0"
         size: 64
 
+        fields:
           - name: F
             lsb: 0
             msb: 0
@@ -87,6 +88,7 @@
         condition: "When PAR_EL1.F == 0b1"
         size: 64
 
+        fields:
           - name: F
             lsb: 0
             msb: 0

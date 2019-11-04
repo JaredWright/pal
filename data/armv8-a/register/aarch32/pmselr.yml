@@ -31,6 +31,7 @@
       - name: fieldset_1
         size: 32
 
+        fields:
           - name: SEL
             lsb: 0
             msb: 4

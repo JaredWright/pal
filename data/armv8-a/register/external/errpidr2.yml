@@ -21,6 +21,7 @@
         condition: "When the component uses a 12-bit part number"
         size: 32
 
+        fields:
           - name: DES_1
             lsb: 0
             msb: 2
@@ -42,6 +43,7 @@
         condition: "When the component uses a 16-bit part number"
         size: 32
 
+        fields:
           - name: DES_1
             lsb: 0
             msb: 2

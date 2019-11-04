@@ -34,6 +34,7 @@
         condition: "When HaveEL(EL3) and !ELUsingAArch32(EL3)"
         size: 64
 
+        fields:
           - name: 0
             lsb: 0
             msb: 0
@@ -111,6 +112,7 @@
         condition: "When !HaveEL(EL3)"
         size: 64
 
+        fields:
           - name: 0
             lsb: 0
             msb: 0

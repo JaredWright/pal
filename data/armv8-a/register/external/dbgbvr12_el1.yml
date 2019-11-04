@@ -26,6 +26,7 @@
         condition: "When DBGBCR<n>_EL1.BT == 0b0x0x"
         size: 64
 
+        fields:
           - name: 0
             lsb: 0
             msb: 1
@@ -51,6 +52,7 @@
         condition: "When DBGBCR<n>_EL1.BT == 0b001x"
         size: 64
 
+        fields:
           - name: ContextID
             lsb: 0
             msb: 31
@@ -64,6 +66,7 @@
         condition: "When DBGBCR<n>_EL1.BT == 0b011x"
         size: 64
 
+        fields:
           - name: 0
             lsb: 0
             msb: 31
@@ -82,6 +85,7 @@
         condition: "When DBGBCR<n>_EL1.BT == 0b100x and HaveEL(EL2)"
         size: 64
 
+        fields:
           - name: 0
             lsb: 0
             msb: 31
@@ -109,6 +113,7 @@
         condition: "When DBGBCR<n>_EL1.BT == 0b101x and HaveEL(EL2)"
         size: 64
 
+        fields:
           - name: ContextID
             lsb: 0
             msb: 31
@@ -135,6 +140,7 @@
         condition: "When DBGBCR<n>_EL1.BT == 0b110x and HaveEL(EL2)"
         size: 64
 
+        fields:
           - name: 0
             lsb: 0
             msb: 31
@@ -153,6 +159,7 @@
         condition: "When DBGBCR<n>_EL1.BT == 0b111x and HaveEL(EL2)"
         size: 64
 
+        fields:
           - name: 0
             lsb: 0
             msb: 31

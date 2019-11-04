@@ -26,6 +26,7 @@
       - name: fieldset_1
         size: 32
 
+        fields:
           - name: Ctype<n>
             lsb: 0
             msb: 20

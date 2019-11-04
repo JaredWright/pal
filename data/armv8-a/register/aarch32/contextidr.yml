@@ -33,6 +33,7 @@
         condition: "When TTBCR.EAE == 0"
         size: 32
 
+        fields:
           - name: ASID
             lsb: 0
             msb: 7
@@ -45,6 +46,7 @@
         condition: "When TTBCR.EAE == 1"
         size: 32
 
+        fields:
           - name: PROCID
             lsb: 0
             msb: 31

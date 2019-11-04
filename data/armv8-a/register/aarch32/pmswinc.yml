@@ -23,6 +23,7 @@
       - name: fieldset_1
         size: 32
 
+        fields:
           - name: P<n>
             lsb: 0
             msb: 30

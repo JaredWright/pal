@@ -25,6 +25,7 @@
         condition: "When ARMv8.3-CCIDX is implemented"
         size: 64
 
+        fields:
           - name: LineSize
             lsb: 0
             msb: 2
@@ -50,6 +51,7 @@
       - name: fieldset_2
         size: 64
 
+        fields:
           - name: LineSize
             lsb: 0
             msb: 2

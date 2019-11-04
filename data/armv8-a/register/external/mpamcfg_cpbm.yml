@@ -37,6 +37,7 @@
       - name: fieldset_1
         size: 32768
 
+        fields:
           - name: CPBM<n>
             lsb: 0
             msb: 32767

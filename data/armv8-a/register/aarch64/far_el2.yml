@@ -52,6 +52,7 @@
       - name: fieldset_1
         size: 64
 
+        fields:
           - name: Faulting_Virtual_Address_for_synchronous_exceptions_taken_to_EL2
             lsb: 0
             msb: 63

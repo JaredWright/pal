@@ -35,6 +35,7 @@
       - name: fieldset_1
         size: 64
 
+        fields:
           - name: Clock_frequency
             lsb: 0
             msb: 31

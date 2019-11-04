@@ -23,6 +23,7 @@
       - name: fieldset_1
         size: 64
 
+        fields:
           - name: IMPLEMENTATION_DEFINED
             lsb: 0
             msb: 63

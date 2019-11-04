@@ -20,6 +20,7 @@
       - name: fieldset_1
         size: 32
 
+        fields:
           - name: PRMBL_1
             lsb: 0
             msb: 3

@@ -19,6 +19,7 @@
         condition: "When ARMv8.2-PCSample is implemented"
         size: 32
 
+        fields:
           - name: 0
             lsb: 0
             msb: 31
@@ -28,6 +29,7 @@
         condition: "When ARMv8.1-VHE is not implemented"
         size: 32
 
+        fields:
           - name: VMID
             lsb: 0
             msb: 7
@@ -57,6 +59,7 @@
         condition: "When ARMv8.1-VHE is implemented and EDSCR.SC2 == 0"
         size: 32
 
+        fields:
           - name: 0
             lsb: 0
             msb: 15
@@ -111,6 +114,7 @@
         condition: "When ARMv8.1-VHE is implemented and EDSCR.SC2 == 1"
         size: 32
 
+        fields:
           - name: 0
             lsb: 0
             msb: 31

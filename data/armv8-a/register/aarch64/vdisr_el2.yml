@@ -52,6 +52,7 @@
         condition: "When !ELUsingAArch32(EL1)"
         size: 64
 
+        fields:
           - name: ISS
             lsb: 0
             msb: 23
@@ -78,6 +79,7 @@
         condition: "When !ELUsingAArch32(EL1) and VDISR_EL2.LPAE == 0"
         size: 64
 
+        fields:
           - name: FS[3:0]
             lsb: 0
             msb: 3
@@ -131,6 +133,7 @@
         condition: "When ELUsingAArch32(EL1) and VDISR_EL2.LPAE == 1"
         size: 64
 
+        fields:
           - name: STATUS
             lsb: 0
             msb: 5

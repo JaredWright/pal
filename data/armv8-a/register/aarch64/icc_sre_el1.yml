@@ -34,6 +34,7 @@
       - name: fieldset_1
         size: 64
 
+        fields:
           - name: SRE
             lsb: 0
             msb: 0

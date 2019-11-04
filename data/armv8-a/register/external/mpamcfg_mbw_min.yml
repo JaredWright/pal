@@ -36,6 +36,7 @@
       - name: fieldset_1
         size: 32
 
+        fields:
           - name: MIN
             lsb: 0
             msb: 15

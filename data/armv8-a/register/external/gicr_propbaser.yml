@@ -25,6 +25,7 @@
       - name: fieldset_1
         size: 64
 
+        fields:
           - name: IDbits
             lsb: 0
             msb: 4

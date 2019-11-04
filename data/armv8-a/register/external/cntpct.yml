@@ -33,6 +33,7 @@
       - name: fieldset_1
         size: 64
 
+        fields:
           - name: Physical_count_value
             lsb: 0
             msb: 63
