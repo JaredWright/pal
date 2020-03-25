@@ -12,7 +12,7 @@ Is your software so tightly coupled to your CPU that unit testing seems impossib
 
 The Bareflank **P**rocessor **A**bstraction **L**ayer transforms facts about your CPU into a software support library. This lets you access and manipulate the low-level details of your hardware through a convinient software API. Supose you are working on a C++ project for the Intel platform, and compiling/assembling with a GNU toolchain:
 
-0. Install Python > 3.6 and ```pip install lxml dataclasses colorama```
+0. Install Python > 3.6 and ```pip install lxml dataclasses colorama pyyaml```
 
 1. Generate a PAL for your project:
 
