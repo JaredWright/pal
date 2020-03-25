@@ -117,8 +117,7 @@ class Cxx11RegisterAccessorWriter():
         for am_key, am_list in register.access_mechanisms.items():
             for am in am_list:
                 if am.is_write():
-                    if am.is_memory_mapped():
-                        size_type = self._register_size_type(register)
+                    size_type = self._register_size_type(register)
 
                     if register.arch == "generic":
                         addr_calc = str(am.component) + '_base_address() + offset'
@@ -129,12 +128,13 @@ class Cxx11RegisterAccessorWriter():
                                                keywords=[size_type])
                         outfile.write("*address = value;")
                     else:
-                        addr_calc = str(am.component) + '_base_address() + offset'
-                        if register.is_indexed:
-                            addr_calc += " + (index * sizeof(" + size_type + "))"
+                        if am.is_memory_mapped():
+                            addr_calc = str(am.component) + '_base_address() + offset'
+                            if register.is_indexed:
+                                addr_calc += " + (index * sizeof(" + size_type + "))"
 
-                        self._declare_variable(outfile, "address", addr_calc,
-                                               keywords=[size_type])
+                            self._declare_variable(outfile, "address", addr_calc,
+                                                   keywords=[size_type])
 
                         self.call_writable_access_mechanism(
                             outfile, register, am, "value"

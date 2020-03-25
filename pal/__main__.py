@@ -86,6 +86,16 @@ def main_armv8a(config, generator):
     generator.generate(copy.deepcopy(regs), outdir)
 
 
+def main_acpi(config, generator):
+    data_path = config.pal_data_dir
+
+    indir = os.path.join(data_path, "acpi")
+    outdir = os.path.join(config.pal_output_dir, "acpi")
+    os.makedirs(outdir, exist_ok=True)
+    regs = parse_registers(indir)
+    generator.generate(copy.deepcopy(regs), outdir)
+
+
 def pal_main():
     config = parse_cmd_args(sys.argv[1:])
     config.validate()
@@ -107,6 +117,7 @@ def pal_main():
     else:
         raise Exception("Invalid generator: " + str(config.generator))
 
+    main_acpi(config, generator)
     if config.arch == "intel_x64":
         main_intel_x64(config, generator)
     elif config.arch == "armv8-a":
