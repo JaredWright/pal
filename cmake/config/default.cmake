@@ -151,3 +151,10 @@ add_config(
     DEFAULT_VAL OFF
     DESCRIPTION "Set to ON to enable the project's tests"
 )
+
+add_config(
+    CONFIG_NAME ACPI
+    CONFIG_TYPE BOOL
+    DEFAULT_VAL OFF
+    DESCRIPTION "Set to ON to include ACPI in the generated PAL"
+)

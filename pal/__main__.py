@@ -117,7 +117,6 @@ def pal_main():
     else:
         raise Exception("Invalid generator: " + str(config.generator))
 
-    main_acpi(config, generator)
     if config.arch == "intel_x64":
         main_intel_x64(config, generator)
     elif config.arch == "armv8-a":
@@ -125,5 +124,7 @@ def pal_main():
     else:
         raise Exception("Invalid architecture: " + str(config.arch))
 
+    if config.acpi:
+        main_acpi(config, generator)
 
 pal_main()

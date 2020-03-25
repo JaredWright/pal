@@ -56,6 +56,14 @@ class CRegisterAccessorWriter():
             encoding = register.access_mechanisms["vmwrite"][0].encoding
             self._declare_hex_integer_constant(outfile, prefix + "encoding", encoding)
             self.write_newline(outfile)
+        elif register.access_mechanisms.get("read"):
+            offset = register.access_mechanisms["read"][0].offset
+            self._declare_hex_integer_constant(outfile, prefix + "offset", offset)
+            self.write_newline(outfile)
+        elif register.access_mechanisms.get("write"):
+            offset = register.access_mechanisms["write"][0].offset
+            self._declare_hex_integer_constant(outfile, prefix + "offset", offset)
+            self.write_newline(outfile)
 
 
         self.write_newline(outfile)
@@ -84,10 +92,13 @@ class CRegisterAccessorWriter():
                     size_type = self._register_size_type(register)
 
                     if register.arch == "generic":
-                        addr_calc = "pal_" + str(am.component) + '_base_address() + ' + offset_name
+                        addr_calc = "(" + size_type + " *)("
+                        addr_calc += "pal_" + str(am.component) + '_base_address() + ' + offset_name
 
                         if register.is_indexed:
                             addr_calc += " + (index * sizeof(" + size_type + "))"
+
+                        addr_calc += ")"
 
                         self._declare_variable(outfile, "* address", addr_calc,
                                                keywords=[size_type])
@@ -131,10 +142,13 @@ class CRegisterAccessorWriter():
                     size_type = self._register_size_type(register)
 
                     if register.arch == "generic":
-                        addr_calc = "pal_" + str(am.component) + '_base_address() + ' + offset_name
+                        addr_calc = "(" + size_type + " *)("
+                        addr_calc += "pal_" + str(am.component) + '_base_address() + ' + offset_name
 
                         if register.is_indexed:
                             addr_calc += " + (index * sizeof(" + size_type + "))"
+
+                        addr_calc += ")"
 
                         self._declare_variable(outfile, "* address", addr_calc,
                                                keywords=[size_type])

@@ -28,6 +28,7 @@ add_custom_command(
         --bit_clear_function=${BIT_CLEAR_FUNCTION}
         --bit_is_clear_function=${BIT_IS_CLEAR_FUNCTION}
         --print_function=${PRINT_FUNCTION}
+        --acpi=${ACPI}
     COMMAND cmake -E touch ${PAL_OUTPUT_STAMP}
     OUTPUT ${PAL_OUTPUT_STAMP}
     DEPENDS ${PAL_SRC_FILES}
