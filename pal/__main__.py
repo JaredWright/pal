@@ -89,11 +89,15 @@ def main_armv8a(config, generator):
 def main_acpi(config, generator):
     data_path = config.pal_data_dir
 
-    indir = os.path.join(data_path, "acpi")
-    outdir = os.path.join(config.pal_output_dir, "acpi")
-    os.makedirs(outdir, exist_ok=True)
-    regs = parse_registers(indir)
-    generator.generate(copy.deepcopy(regs), outdir)
+    from pal.logger import logger
+    acpi_top_dir = os.path.join(data_path, "acpi")
+    acpi_sub_dirs = next(os.walk(acpi_top_dir))[1]
+    for subdir in acpi_sub_dirs:
+        indir = os.path.join(acpi_top_dir, subdir)
+        outdir = os.path.join(config.pal_output_dir, "acpi", subdir)
+        os.makedirs(outdir, exist_ok=True)
+        regs = parse_registers(indir)
+        generator.generate(copy.deepcopy(regs), outdir)
 
 
 def pal_main():

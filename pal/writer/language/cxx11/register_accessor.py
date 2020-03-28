@@ -73,7 +73,7 @@ class Cxx11RegisterAccessorWriter():
         gadget.args = []
 
         if register.is_indexed:
-            gadget.args = [("uint32_t", "index")]
+            gadget.args.append(("uint32_t", "index"))
             gadget.name = gadget.name + "_at_index"
 
         self._declare_register_get_details(outfile, register)
@@ -119,6 +119,10 @@ class Cxx11RegisterAccessorWriter():
         gadget.name = config.register_write_function
         gadget.return_type = "void"
         gadget.args = [(size_type, "value")]
+
+        if register.is_indexed:
+            gadget.args.append(("uint32_t", "index"))
+            gadget.name = gadget.name + "_at_index"
 
         self._declare_register_set_details(outfile, register)
 
